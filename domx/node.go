@@ -1,72 +1,74 @@
-package dom
+package domx
 
 import (
 	"golang.org/x/net/html"
+
+	"github.com/crhntr/dom"
 )
 
-func nodeType(nodeType html.NodeType) NodeType {
+func nodeType(nodeType html.NodeType) dom.NodeType {
 	switch nodeType {
 	case html.TextNode:
-		return NodeTypeText
+		return dom.NodeTypeText
 	case html.DocumentNode:
-		return NodeTypeDocument
+		return dom.NodeTypeDocument
 	case html.ElementNode:
-		return NodeTypeElement
+		return dom.NodeTypeElement
 	case html.CommentNode:
-		return NodeTypeComment
+		return dom.NodeTypeComment
 	case html.DoctypeNode:
-		return NodeTypeDocumentType
+		return dom.NodeTypeDocumentType
 	default:
 		fallthrough
 	case html.ErrorNode, html.RawNode:
-		return NodeTypeUnknown
+		return dom.NodeTypeUnknown
 	}
 }
 
-func htmlNodeToDomNode(node *html.Node) Node {
+func htmlNodeToDomNode(node *html.Node) dom.Node {
 	if node == nil {
 		return nil
 	}
 	switch node.Type {
 	case html.ElementNode:
-		return &ElementHTMLNode{node: node}
+		return &Element{node: node}
 	case html.TextNode:
-		return &TextHTMLNode{node: node}
+		return &Text{node: node}
 	case html.DocumentNode:
-		return &DocumentHTMLNode{node: node}
+		return &Document{node: node}
 	default:
 		panic("not supported")
 	}
 }
 
-func htmlNodeToDomChildNode(node *html.Node) ChildNode {
+func htmlNodeToDomChildNode(node *html.Node) dom.ChildNode {
 	if node == nil {
 		return nil
 	}
 	switch node.Type {
 	case html.ElementNode:
-		return &ElementHTMLNode{node: node}
+		return &Element{node: node}
 	case html.TextNode:
-		return &TextHTMLNode{node: node}
+		return &Text{node: node}
 	default:
 		panic("not supported")
 	}
 }
 
-func htmlNodeToDomElement(node *html.Node) Element {
+func htmlNodeToDomElement(node *html.Node) dom.Element {
 	if node == nil {
 		return nil
 	}
-	return &ElementHTMLNode{node: node}
+	return &Element{node: node}
 }
 
-func domNodeToHTMLNode(node Node) *html.Node {
+func domNodeToHTMLNode(node dom.Node) *html.Node {
 	switch ot := node.(type) {
-	case *ElementHTMLNode:
+	case *Element:
 		return ot.node
-	case *TextHTMLNode:
+	case *Text:
 		return ot.node
-	case *DocumentHTMLNode:
+	case *Document:
 		return ot.node
 	default:
 		panic("not implemented")
@@ -101,7 +103,7 @@ func (node *SiblingNodeList) Length() int {
 	return result
 }
 
-func (node *SiblingNodeList) Item(index int) Node {
+func (node *SiblingNodeList) Item(index int) dom.Node {
 	c := (*html.Node)(node)
 	offset := 0
 	for c != nil {

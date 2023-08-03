@@ -1,4 +1,4 @@
-package dom
+package domx
 
 import (
 	"bytes"
@@ -7,6 +7,8 @@ import (
 
 	"github.com/andybalholm/cascadia"
 	"golang.org/x/net/html"
+
+	"github.com/crhntr/dom"
 )
 
 func isConnected(node *html.Node) bool {
@@ -20,24 +22,24 @@ func isConnected(node *html.Node) bool {
 	return false
 }
 
-func ownerDocument(node *html.Node) Document {
+func ownerDocument(node *html.Node) dom.Document {
 	p := node.Parent
 	for p != nil {
 		if p.Type == html.DocumentNode {
-			return &DocumentHTMLNode{node: p}
+			return &Document{node: p}
 		}
 		p = p.Parent
 	}
 	return nil
 }
-func parentNode(node *html.Node) Node           { return htmlNodeToDomNode(node.Parent) }
-func parentElement(node *html.Node) Element     { return htmlNodeToDomElement(node.Parent) }
-func hasChildNodes(node *html.Node) bool        { return node.FirstChild != nil }
-func childNodes(node *html.Node) NodeList       { return (*SiblingNodeList)(node.FirstChild) }
-func firstChild(node *html.Node) ChildNode      { return htmlNodeToDomChildNode(node.FirstChild) }
-func lastChild(node *html.Node) ChildNode       { return htmlNodeToDomChildNode(node.LastChild) }
-func previousSibling(node *html.Node) ChildNode { return htmlNodeToDomChildNode(node.PrevSibling) }
-func nextSibling(node *html.Node) ChildNode     { return htmlNodeToDomChildNode(node.NextSibling) }
+func parentNode(node *html.Node) dom.Node           { return htmlNodeToDomNode(node.Parent) }
+func parentElement(node *html.Node) dom.Element     { return htmlNodeToDomElement(node.Parent) }
+func hasChildNodes(node *html.Node) bool            { return node.FirstChild != nil }
+func childNodes(node *html.Node) dom.NodeList       { return (*SiblingNodeList)(node.FirstChild) }
+func firstChild(node *html.Node) dom.ChildNode      { return htmlNodeToDomChildNode(node.FirstChild) }
+func lastChild(node *html.Node) dom.ChildNode       { return htmlNodeToDomChildNode(node.LastChild) }
+func previousSibling(node *html.Node) dom.ChildNode { return htmlNodeToDomChildNode(node.PrevSibling) }
+func nextSibling(node *html.Node) dom.ChildNode     { return htmlNodeToDomChildNode(node.NextSibling) }
 
 func textContent(node *html.Node) string {
 	var buf bytes.Buffer
@@ -59,7 +61,7 @@ func recursiveTextContent(sw io.StringWriter, n *html.Node) {
 	}
 }
 
-func cloneNode(node *html.Node, deep bool) Node {
+func cloneNode(node *html.Node, deep bool) dom.Node {
 	if deep {
 		var buf bytes.Buffer
 		err := html.Render(&buf, node)
@@ -92,7 +94,7 @@ func cloneNode(node *html.Node, deep bool) Node {
 	return htmlNodeToDomNode(&c)
 }
 
-func isSameNode(node *html.Node, other Node) bool {
+func isSameNode(node *html.Node, other dom.Node) bool {
 	if node == nil || other == nil {
 		return false
 	}
@@ -100,7 +102,7 @@ func isSameNode(node *html.Node, other Node) bool {
 	return n != nil && node == n
 }
 
-func contains(node *html.Node, other Node) bool {
+func contains(node *html.Node, other dom.Node) bool {
 	o := domNodeToHTMLNode(other)
 	if o == nil {
 		return false
@@ -115,7 +117,7 @@ func contains(node *html.Node, other Node) bool {
 	return found
 }
 
-func insertBefore(parent *html.Node, node, child ChildNode) ChildNode {
+func insertBefore(parent *html.Node, node, child dom.ChildNode) dom.ChildNode {
 	n := domNodeToHTMLNode(node)
 	c := domNodeToHTMLNode(child)
 	if n.Parent != nil {
@@ -125,7 +127,7 @@ func insertBefore(parent *html.Node, node, child ChildNode) ChildNode {
 	return htmlNodeToDomChildNode(n)
 }
 
-func appendChild(parent *html.Node, node ChildNode) ChildNode {
+func appendChild(parent *html.Node, node dom.ChildNode) dom.ChildNode {
 	n := domNodeToHTMLNode(node)
 	if n.Parent != nil {
 		n.Parent.RemoveChild(n)
@@ -134,7 +136,7 @@ func appendChild(parent *html.Node, node ChildNode) ChildNode {
 	return htmlNodeToDomChildNode(n)
 }
 
-func replaceChild(parent *html.Node, node, child ChildNode) ChildNode {
+func replaceChild(parent *html.Node, node, child dom.ChildNode) dom.ChildNode {
 	n := domNodeToHTMLNode(node)
 	c := domNodeToHTMLNode(child)
 	if c.Parent != parent {
@@ -163,32 +165,32 @@ func replaceChild(parent *html.Node, node, child ChildNode) ChildNode {
 	return htmlNodeToDomChildNode(c)
 }
 
-func removeChild(parent *html.Node, node ChildNode) ChildNode {
+func removeChild(parent *html.Node, node dom.ChildNode) dom.ChildNode {
 	n := domNodeToHTMLNode(node)
 	parent.RemoveChild(n)
 	return htmlNodeToDomChildNode(n)
 }
 
-func children(parent *html.Node) ElementCollection {
+func children(parent *html.Node) dom.ElementCollection {
 	return SiblingElements{firstChild: parent.FirstChild}
 }
 
-func firstElementChild(node *html.Node) Element {
+func firstElementChild(node *html.Node) dom.Element {
 	child := node.FirstChild
 	for child != nil {
 		if child.Type == html.ElementNode {
-			return &ElementHTMLNode{node: child}
+			return &Element{node: child}
 		}
 		child = child.NextSibling
 	}
 	return nil
 }
 
-func lastElementChild(node *html.Node) Element {
+func lastElementChild(node *html.Node) dom.Element {
 	child := node.LastChild
 	for child != nil {
 		if child.Type == html.ElementNode {
-			return &ElementHTMLNode{node: child}
+			return &Element{node: child}
 		}
 		child = child.PrevSibling
 	}
@@ -209,7 +211,7 @@ func childElementCount(node *html.Node) int {
 	return result
 }
 
-func prependNodes(node *html.Node, nodes []ChildNode) {
+func prependNodes(node *html.Node, nodes []dom.ChildNode) {
 	for i := range nodes {
 		dn := nodes[len(nodes)-1-i]
 		n := domNodeToHTMLNode(dn)
@@ -228,14 +230,14 @@ func prependNodes(node *html.Node, nodes []ChildNode) {
 	}
 }
 
-func appendNodes(parent *html.Node, nodes []ChildNode) {
+func appendNodes(parent *html.Node, nodes []dom.ChildNode) {
 	for _, node := range nodes {
 		n := domNodeToHTMLNode(node)
 		parent.AppendChild(n)
 	}
 }
 
-func replaceChildren(parent *html.Node, nodes []ChildNode) {
+func replaceChildren(parent *html.Node, nodes []dom.ChildNode) {
 	clearChildren(parent)
 	for _, node := range nodes {
 		n := domNodeToHTMLNode(node)
@@ -254,7 +256,7 @@ func clearChildren(node *html.Node) {
 	node.LastChild = nil
 }
 
-func getElementsByTagName(node *html.Node, name string) ElementCollection {
+func getElementsByTagName(node *html.Node, name string) dom.ElementCollection {
 	name = strings.ToUpper(name)
 	var list ElementList
 	walkNodes(node, func(n *html.Node) bool {
@@ -266,7 +268,7 @@ func getElementsByTagName(node *html.Node, name string) ElementCollection {
 	return list
 }
 
-func getElementsByClassName(node *html.Node, name string) ElementCollection {
+func getElementsByClassName(node *html.Node, name string) dom.ElementCollection {
 	var list ElementList
 	walkNodes(node, func(n *html.Node) bool {
 		if hasClasses(getAttribute(n, "class"), name) {
@@ -293,25 +295,25 @@ func hasClasses(elementClassesStr, classesStr string) bool {
 	return len(set) == 0
 }
 
-func querySelector(node *html.Node, query string) Element {
-	return &ElementHTMLNode{
+func querySelector(node *html.Node, query string) dom.Element {
+	return &Element{
 		node: cascadia.Query(node, cascadia.MustCompile(query)),
 	}
 }
 
-func querySelectorAll(node *html.Node, query string) NodeList {
+func querySelectorAll(node *html.Node, query string) dom.NodeList {
 	return NodeListHTMLElements(cascadia.QueryAll(node, cascadia.MustCompile(query)))
 }
 
-var _ NodeList = NodeListHTMLElements(nil)
+var _ dom.NodeList = NodeListHTMLElements(nil)
 
 type NodeListHTMLElements []*html.Node
 
 func (n NodeListHTMLElements) Length() int { return len(n) }
 
-func (n NodeListHTMLElements) Item(i int) Node { return htmlNodeToDomNode(n[i]) }
+func (n NodeListHTMLElements) Item(i int) dom.Node { return htmlNodeToDomNode(n[i]) }
 
-func closest(node *html.Node, selector string) Element {
+func closest(node *html.Node, selector string) dom.Element {
 	s := cascadia.MustCompile(selector)
 	for p := node.Parent; p != nil; p = p.Parent {
 		if s.Match(p) {

@@ -1,7 +1,9 @@
-package dom
+package domx
 
 import (
 	"golang.org/x/net/html"
+
+	"github.com/crhntr/dom"
 )
 
 type SiblingElements struct {
@@ -19,27 +21,27 @@ func (list SiblingElements) Length() int {
 	return result
 }
 
-func (list SiblingElements) Item(index int) Element {
+func (list SiblingElements) Item(index int) dom.Element {
 	childIndex := 0
 	for c := list.firstChild; c != nil; c = c.NextSibling {
 		if c.Type != html.ElementNode {
 			continue
 		}
 		if childIndex == index {
-			return &ElementHTMLNode{node: c}
+			return &Element{node: c}
 		}
 		childIndex++
 	}
 	return nil
 }
 
-func (list SiblingElements) NamedItem(name string) Element {
+func (list SiblingElements) NamedItem(name string) dom.Element {
 	for c := list.firstChild; c != nil; c = c.NextSibling {
 		if c.Type != html.ElementNode {
 			continue
 		}
 		if isNamed(c, name) {
-			return &ElementHTMLNode{node: c}
+			return &Element{node: c}
 		}
 	}
 	return nil
@@ -49,17 +51,17 @@ type ElementList []*html.Node
 
 func (list ElementList) Length() int { return len(list) }
 
-func (list ElementList) Item(index int) Element {
+func (list ElementList) Item(index int) dom.Element {
 	if index < 0 || index >= len(list) {
 		return nil
 	}
-	return &ElementHTMLNode{node: list[index]}
+	return &Element{node: list[index]}
 }
 
-func (list ElementList) NamedItem(name string) Element {
+func (list ElementList) NamedItem(name string) dom.Element {
 	for _, el := range list {
 		if isNamed(el, name) {
-			return &ElementHTMLNode{node: el}
+			return &Element{node: el}
 		}
 	}
 	return nil
