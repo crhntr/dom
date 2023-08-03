@@ -1,238 +1,195 @@
-// +build js,wasm
-
 package dom
 
 import (
 	"bytes"
-	"fmt"
-	"html/template"
 	"strings"
-	"syscall/js"
+
+	"golang.org/x/net/html"
 )
 
-type Element js.Value
-
-func Body() Element {
-	return Element(Document.Call("getElementsByTagName", "body").Index(0))
+type ElementHTMLNode struct {
+	node *html.Node
 }
 
-func NewElementFromTemplate(tmp *template.Template, name string, data interface{}) (Element, error) {
-	buf := bytes.NewBuffer(nil)
-	err := tmp.ExecuteTemplate(buf, name, data)
+// Node
+
+func (e *ElementHTMLNode) NodeType() NodeType         { return nodeType(e.node.Type) }
+func (e *ElementHTMLNode) IsConnected() bool          { return isConnected(e.node) }
+func (e *ElementHTMLNode) OwnerDocument() Document    { return ownerDocument(e.node) }
+func (e *ElementHTMLNode) ParentNode() Node           { return parentNode(e.node) }
+func (e *ElementHTMLNode) ParentElement() Element     { return parentElement(e.node) }
+func (e *ElementHTMLNode) PreviousSibling() ChildNode { return previousSibling(e.node) }
+func (e *ElementHTMLNode) NextSibling() ChildNode     { return nextSibling(e.node) }
+func (e *ElementHTMLNode) TextContent() string        { return textContent(e.node) }
+func (e *ElementHTMLNode) CloneNode(deep bool) Node   { return cloneNode(e.node, deep) }
+func (e *ElementHTMLNode) IsSameNode(other Node) bool { return isSameNode(e.node, other) }
+func (e *ElementHTMLNode) Length() int {
+	c := e.node
+	result := 0
+	for c != nil {
+		result++
+		c = c.NextSibling
+	}
+	return result
+}
+
+// ParentNode
+
+func (e *ElementHTMLNode) Children() ElementCollection        { return children(e.node) }
+func (e *ElementHTMLNode) FirstElementChild() Element         { return firstElementChild(e.node) }
+func (e *ElementHTMLNode) LastElementChild() Element          { return lastElementChild(e.node) }
+func (e *ElementHTMLNode) ChildElementCount() int             { return childElementCount(e.node) }
+func (e *ElementHTMLNode) Prepend(nodes ...ChildNode)         { prependNodes(e.node, nodes) }
+func (e *ElementHTMLNode) Append(nodes ...ChildNode)          { appendNodes(e.node, nodes) }
+func (e *ElementHTMLNode) ReplaceChildren(nodes ...ChildNode) { replaceChildren(e.node, nodes) }
+func (e *ElementHTMLNode) GetElementsByTagName(name string) ElementCollection {
+	return getElementsByTagName(e.node, name)
+}
+func (e *ElementHTMLNode) GetElementsByClassName(name string) ElementCollection {
+	return getElementsByClassName(e.node, name)
+}
+
+func (e *ElementHTMLNode) QuerySelector(query string) Element { return querySelector(e.node, query) }
+func (e *ElementHTMLNode) QuerySelectorAll(query string) NodeList {
+	return querySelectorAll(e.node, query)
+}
+func (e *ElementHTMLNode) Closest(selector string) Element { return closest(e.node, selector) }
+func (e *ElementHTMLNode) Matches(selector string) bool    { return matches(e.node, selector) }
+
+func (e *ElementHTMLNode) HasChildNodes() bool      { return hasChildNodes(e.node) }
+func (e *ElementHTMLNode) ChildNodes() NodeList     { return childNodes(e.node) }
+func (e *ElementHTMLNode) FirstChild() ChildNode    { return firstChild(e.node) }
+func (e *ElementHTMLNode) LastChild() ChildNode     { return lastChild(e.node) }
+func (e *ElementHTMLNode) Contains(other Node) bool { return contains(e.node, other) }
+func (e *ElementHTMLNode) InsertBefore(node, child ChildNode) ChildNode {
+	return insertBefore(e.node, node, child)
+}
+func (e *ElementHTMLNode) AppendChild(node ChildNode) ChildNode { return appendChild(e.node, node) }
+func (e *ElementHTMLNode) ReplaceChild(node, child ChildNode) ChildNode {
+	return replaceChild(e.node, node, child)
+}
+func (e *ElementHTMLNode) RemoveChild(node ChildNode) ChildNode { return removeChild(e.node, node) }
+
+// Element
+
+func (e *ElementHTMLNode) TagName() string                 { return strings.ToUpper(e.node.Data) }
+func (e *ElementHTMLNode) ID() string                      { return getAttribute(e.node, "id") }
+func (e *ElementHTMLNode) ClassName() string               { return getAttribute(e.node, "class") }
+func (e *ElementHTMLNode) GetAttribute(name string) string { return getAttribute(e.node, name) }
+
+func getAttribute(node *html.Node, name string) string {
+	name = strings.ToLower(name)
+	for _, att := range node.Attr {
+		if att.Key == name {
+			return att.Val
+		}
+	}
+	return ""
+}
+
+func (e *ElementHTMLNode) SetAttribute(name, value string) {
+	name = strings.ToLower(name)
+	for index, att := range e.node.Attr {
+		if att.Key == name {
+			e.node.Attr[index].Val = value
+		}
+	}
+	e.node.Attr = append(e.node.Attr, html.Attribute{
+		Key: name, Val: value,
+	})
+}
+
+func (e *ElementHTMLNode) RemoveAttribute(name string) {
+	name = strings.ToLower(name)
+	filtered := e.node.Attr[:0]
+	for _, att := range e.node.Attr {
+		if att.Key == name {
+			continue
+		}
+		filtered = append(filtered, att)
+	}
+	e.node.Attr = filtered
+}
+
+func (e *ElementHTMLNode) ToggleAttribute(name string) bool {
+	name = strings.ToLower(name)
+	if e.HasAttribute(name) {
+		e.RemoveAttribute(name)
+		return false
+	}
+	e.SetAttribute(name, "")
+	return true
+}
+
+func (e *ElementHTMLNode) HasAttribute(name string) bool {
+	name = strings.ToLower(name)
+	for _, att := range e.node.Attr {
+		if att.Key == name {
+			return true
+		}
+	}
+	return false
+}
+
+func (e *ElementHTMLNode) isNamed(name string) bool {
+	return isNamed(e.node, name)
+}
+
+func isNamed(node *html.Node, name string) bool {
+	if node == nil || node.Type != html.ElementNode {
+		return false
+	}
+	id := getAttribute(node, "id")
+	nm := getAttribute(node, "name")
+	return (id != "" && id == name) || (nm != "" && nm == name)
+}
+
+func (e *ElementHTMLNode) SetInnerHTML(s string) {
+	nodes, err := html.ParseFragment(strings.NewReader(s), &html.Node{Type: html.ElementNode})
 	if err != nil {
-		return Element(js.Null()), err
+		panic(err)
 	}
-
-	div := Document.Call("createElement", "div")
-	div.Set("innerHTML", strings.TrimSpace(buf.String()))
-
-	v := div.Get("firstChild")
-	if !v.Truthy() {
-		return Element(js.Null()), fmt.Errorf("could not get created element")
+	clearChildren(e.node)
+	for _, n := range nodes {
+		e.node.AppendChild(n)
 	}
-
-	return Element(v), nil
 }
 
-func NewElement(format string, vs ...interface{}) (Element, error) {
-	tmp := Document.Call("createElement", "div")
-	tmp.Set("innerHTML", strings.TrimSpace(fmt.Sprintf(format, vs...)))
-
-	v := tmp.Get("firstChild")
-	if !v.Truthy() {
-		return Element(js.Null()), fmt.Errorf("could not get created element")
-	}
-
-	return Element(v), nil
-}
-
-func GetElementByID(id string) Element {
-	v := Document.Call("getElementById", id)
-	if !v.Truthy() {
-		return Element(js.Null())
-	}
-	return Element(v)
-}
-
-func QuerySelector(query string, args ...interface{}) (_ Element, err error) {
-	defer func() {
-		if r := recover(); r != nil {
-			var ok bool
-			if err, ok = r.(js.Error); !ok {
-				panic(r)
-			}
+func (e *ElementHTMLNode) InnerHTML() string {
+	var buf bytes.Buffer
+	c := e.node.FirstChild
+	for c != nil {
+		err := html.Render(&buf, c)
+		if err != nil {
+			panic(err)
 		}
-	}()
-
-	query = fmt.Sprintf(query, args...)
-
-	v := Document.Call("querySelector", query)
-
-	if !v.Truthy() {
-		return Element(js.Null()), fmt.Errorf("query failed to find element matching selector: %q", query)
+		c = c.NextSibling
 	}
-	return Element(v), nil
+	return buf.String()
 }
 
-func QuerySelectorAll(query string, args ...interface{}) []Element {
-	var elements []Element
-
-	query = fmt.Sprintf(query, args...)
-
-	matches := Document.Call("querySelectorAll", query)
-
-	if !matches.Truthy() {
-		return nil
+func (e *ElementHTMLNode) SetOuterHTML(s string) {
+	nodes, err := html.ParseFragment(strings.NewReader(s), &html.Node{Type: html.ElementNode})
+	if err != nil {
+		panic(err)
 	}
-
-	length := matches.Length()
-
-	for index := 0; index < length; index++ {
-		elements = append(elements, Element(matches.Index(index)))
-	}
-
-	return elements
-}
-
-func (el Element) Get(key string) js.Value                     { return js.Value(el).Get(key) }
-func (el Element) Set(key string, value interface{})           { js.Value(el).Set(key, value) }
-func (el Element) Call(m string, args ...interface{}) js.Value { return js.Value(el).Call(m, args...) }
-func (el Element) JSValue() js.Value                           { return js.Value(el) }
-func (el Element) Type() js.Type                               { return js.Value(el).Type() }
-func (el Element) Truthy() bool                                { return js.Value(el).Truthy() }
-func (el Element) IsNull() bool                                { return js.Value(el).IsNull() }
-func (el Element) IsUndefined() bool                           { return js.Value(el).IsUndefined() }
-func (el Element) InstanceOf(t js.Value) bool                  { return js.Value(el).InstanceOf(t) }
-
-func (el Element) Attribute(key string) string {
-	return el.Call("getAttribute", key).String()
-}
-
-func (el Element) SetAttribute(key, val string, args ...interface{}) {
-	el.Call("setAttribute", key, fmt.Sprintf(val, args...))
-}
-
-func (el Element) AddClass(class string) {
-	if list := js.Value(el).Get("classList"); list.Truthy() {
-		list.Call("add", class)
-	}
-}
-
-func (el Element) RemoveClass(class string) {
-	el.Get("classList").Call("remove", class)
-}
-
-func (el Element) ReplaceClass(old, new string) {
-	el.Get("classList").Call("replace", old, new)
-}
-
-func (el Element) ToggleClass(class string) {
-	el.Get("classList").Call("toggle", class)
-}
-
-func (el Element) HasClass(class string) bool {
-	return el.Get("classList").Call("contains", class).Bool()
-}
-
-func (el Element) InnerHTML() string {
-	return el.Get("innerHTML").String()
-}
-
-func (el Element) SetInnerHTML(str string) {
-	el.Set("innerHTML", str)
-}
-
-func (el Element) SetInnerHTMLf(format string, vs ...interface{}) {
-	el.Set("innerHTML", fmt.Sprintf(format, vs...))
-}
-
-func (el Element) ChildCount() int {
-	return el.Get("childElementCount").Int()
-}
-
-func (el Element) AppendChild(child Element) {
-	el.Call("appendChild", child)
-}
-
-func (el Element) Matches(query string) bool {
-	return el.Call("matches", query).Bool()
-}
-
-func (el Element) Closest(query string) Element {
-	return Element(el.Call("closest", query))
-}
-
-func (el Element) QuerySelector(query string, args ...interface{}) Element {
-	query = fmt.Sprintf(query, args...)
-
-	defer func() {
-		if r := recover(); r != nil {
-			if err, ok := r.(js.Error); ok {
-				panic(fmt.Errorf("query selector falied for %q: %w", query, err))
-			}
-		}
-	}()
-
-	return Element(el.Call("querySelector", query))
-}
-
-func (el Element) QuerySelectorAll(query string, args ...interface{}) []Element {
-	var elements []Element
-
-	query = fmt.Sprintf(query, args...)
-
-	defer func() {
-		if r := recover(); r != nil {
-			if err, ok := r.(js.Error); ok {
-				panic(fmt.Errorf("query selector falied for %q: %w", query, err))
-			}
-		}
-	}()
-
-	matches := el.Call("querySelectorAll", query)
-
-	if !matches.Truthy() {
-		return nil
-	}
-
-	for index := 0; index < matches.Length(); index++ {
-		elements = append(elements, Element(matches.Index(index)))
-	}
-
-	return elements
-}
-
-func (el Element) AddEventListener(eventName string, listener EventListener) {
-	el.Call("addEventListener", eventName, js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
-		listener.HandleEvent(Event(args[0]))
-		return nil
-	}))
-}
-
-func (fn EventListenerFunc) HandleEvent(event Event) { fn(event) }
-
-func (el Element) AddEventListenerFunc(eventName string, listener EventListenerFunc) {
-	el.AddEventListener(eventName, listener)
-}
-
-func (el Element) Tag() string {
-	return el.Get("tagName").String()
-}
-
-func (el Element) Remove() {
-	if el.Type() == js.TypeUndefined || el.Type() == js.TypeNull {
+	if len(nodes) == 0 {
 		return
 	}
-	el.Call("remove")
-}
-
-func (el Element) Parent() Element {
-	if el.Type() == js.TypeUndefined || el.Type() == js.TypeNull {
-		return Element(js.Null())
+	if e.node.Parent == nil {
+		panic("browser: SetOuterHTML called on an unattached node")
 	}
-	return Element(el.Get("parentElement"))
+	for _, node := range nodes {
+		e.node.Parent.InsertBefore(node, e.node)
+	}
+	e.node.Parent.RemoveChild(e.node)
 }
 
-func (el Element) Log() {
-	js.Global().Get("console").Call("log", el)
+func (e *ElementHTMLNode) OuterHTML() string {
+	var buf bytes.Buffer
+	err := html.Render(&buf, e.node)
+	if err != nil {
+		panic(err)
+	}
+	return buf.String()
 }

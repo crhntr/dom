@@ -1,68 +1,45 @@
-// +build js,wasm
-
 package dom
 
 import (
-	"syscall/js"
+	"golang.org/x/net/html"
 )
 
-type document byte
-type window byte
-
-const (
-	Document document = 0
-	Window   window   = 0
-)
-
-var (
-	doc = js.Global().Get("document")
-	win = js.Global()
-)
-
-func (_ document) JSValue() js.Value                           { return doc }
-func (_ document) Get(key string) js.Value                     { return doc.Get(key) }
-func (_ document) Set(key string, value interface{})           { doc.Set(key, value) }
-func (_ document) Call(m string, args ...interface{}) js.Value { return doc.Call(m, args...) }
-func (_ document) Type() js.Type                               { return doc.Type() }
-func (_ document) Delete(p string)                             { doc.Delete(p) }
-
-func (el document) AddEventListener(eventName string, listener EventListener) {
-	el.Call("addEventListener", eventName, js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
-		listener.HandleEvent(Event(args[0]))
-		return nil
-	}))
+type DocumentHTMLNode struct {
+	node *html.Node
 }
 
-func (el document) AddEventListenerFunc(eventName string, listener EventListenerFunc) {
-	el.AddEventListener(eventName, listener)
+// Node
+
+func (d *DocumentHTMLNode) NodeType() NodeType         { return nodeType(d.node.Type) }
+func (d *DocumentHTMLNode) CloneNode(deep bool) Node   { return cloneNode(d.node, deep) }
+func (d *DocumentHTMLNode) IsSameNode(other Node) bool { return isSameNode(d.node, other) }
+func (d *DocumentHTMLNode) GetElementsByTagName(name string) ElementCollection {
+	return getElementsByTagName(d.node, name)
+}
+func (d *DocumentHTMLNode) GetElementsByClassName(name string) ElementCollection {
+	return getElementsByClassName(d.node, name)
+}
+func (d *DocumentHTMLNode) QuerySelector(query string) Element { return querySelector(d.node, query) }
+func (d *DocumentHTMLNode) QuerySelectorAll(query string) NodeList {
+	return querySelectorAll(d.node, query)
+}
+func (d *DocumentHTMLNode) Contains(other Node) bool { return contains(d.node, other) }
+
+func (d *DocumentHTMLNode) TextContent() string { return textContent(d.node) }
+
+// Document
+
+func (d *DocumentHTMLNode) CreateElement(localName string) Element {
+	//TODO implement me
+	panic("implement me")
 }
 
-func (el document) AddEventListenerChannel(eventName string, c chan Event) {
-	el.AddEventListenerFunc(eventName, func(event Event) {
-		c <- event
-	})
+func (d *DocumentHTMLNode) CreateElementIs(localName, is string) Element {
+	//TODO implement me
+	panic("implement me")
 }
 
-func (_ window) JSValue() js.Value                           { return win }
-func (_ window) Get(key string) js.Value                     { return win.Get(key) }
-func (_ window) Set(key string, value interface{})           { win.Set(key, value) }
-func (_ window) Call(m string, args ...interface{}) js.Value { return win.Call(m, args...) }
-func (_ window) Type() js.Type                               { return win.Type() }
-func (_ window) Delete(p string)                             { win.Delete(p) }
-
-func (el window) AddEventListener(eventName string, listener EventListener) {
-	el.Call("addEventListener", eventName, js.FuncOf(func(_ js.Value, args []js.Value) interface{} {
-		listener.HandleEvent(Event(args[0]))
-		return nil
-	}))
-}
-
-func (el window) AddEventListenerFunc(eventName string, listener EventListenerFunc) {
-	el.AddEventListener(eventName, listener)
-}
-
-func (el window) AddEventListenerChannel(eventName string, c chan Event) {
-	el.AddEventListenerFunc(eventName, func(event Event) {
-		c <- event
-	})
+func (d *DocumentHTMLNode) CreateTextNode(text string) Text {
+	//TODO implement me
+	panic("implement me")
 }
