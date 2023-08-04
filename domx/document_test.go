@@ -14,11 +14,8 @@ import (
 
 func TestDocument_NodeType(t *testing.T) {
 	// language=html
-	parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`))
-	require.NoError(t, err)
-	document := Document{
-		node: parsedDocument,
-	}
+	textHTML := `<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`
+	document, _ := parseDocument(t, textHTML, "")
 
 	assert.Equal(t, dom.NodeTypeDocument, document.NodeType())
 }
@@ -26,30 +23,28 @@ func TestDocument_NodeType(t *testing.T) {
 func TestDocument_CloneNode(t *testing.T) {
 	t.Run("deep", func(t *testing.T) {
 		// language=html
-		parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`))
-		require.NoError(t, err)
+		textHTML := `<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`
+		document, _ := parseDocument(t, textHTML, "")
 
-		document := Document{node: parsedDocument}
 		result := document.CloneNode(true)
 
 		copied, ok := result.(*Document)
 		assert.True(t, ok, "correct type")
-		assert.False(t, copied.node == parsedDocument, "not the same *html.NewNode")
+		assert.False(t, copied.node == document.node, "not the same *html.NewNode")
 		assert.NotNil(t, copied.node.FirstChild)
-		assert.False(t, copied.node.FirstChild == parsedDocument.FirstChild, "not the same child *html.NewNode")
+		assert.False(t, copied.node.FirstChild == document.node.FirstChild, "not the same child *html.NewNode")
 	})
 	t.Run("not deep", func(t *testing.T) {
 		// language=html
-		parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`))
-		require.NoError(t, err)
+		textHTML := `<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`
+		document, _ := parseDocument(t, textHTML, "")
 
-		document := Document{node: parsedDocument}
 		result := document.CloneNode(false)
 
 		copied, ok := result.(*Document)
 		assert.True(t, ok, "correct type")
 		assert.Nil(t, copied.node.FirstChild)
-		assert.False(t, copied.node == parsedDocument, "not the same *html.NewNode")
+		assert.False(t, copied.node == document.node, "not the same *html.NewNode")
 	})
 }
 func TestDocument_IsSameNode(t *testing.T) {
