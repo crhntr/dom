@@ -61,37 +61,27 @@ func recursiveTextContent(sw io.StringWriter, n *html.Node) {
 	}
 }
 
-func cloneNode(node *html.Node, deep bool) dom.Node {
-	if deep {
-		var buf bytes.Buffer
-		err := html.Render(&buf, node)
-		if err != nil {
-			panic(err)
-		}
-		cl, err := html.ParseFragment(&buf, node.Parent)
-		if err != nil {
-			panic(err)
-		}
-		if len(cl) == 0 {
-			return nil
-		}
-		return htmlNodeToDomNode(cl[0])
-	}
-	c := html.Node{
+func cloneNode(node *html.Node, deep bool) *html.Node {
+	result := &html.Node{
 		Type:      node.Type,
 		Namespace: node.Namespace,
 		Data:      node.Data,
 		DataAtom:  node.DataAtom,
 	}
-	if node.Attr != nil {
-		c.Attr = make([]html.Attribute, len(node.Attr))
-		for i, at := range node.Attr {
-			c.Attr[i].Key = at.Key
-			c.Attr[i].Val = at.Val
-			c.Attr[i].Namespace = at.Namespace
+	if deep {
+		for c := node.FirstChild; c != nil; c = c.NextSibling {
+			result.AppendChild(cloneNode(c, true))
 		}
 	}
-	return htmlNodeToDomNode(&c)
+	if node.Attr != nil {
+		result.Attr = make([]html.Attribute, len(node.Attr))
+		for i, at := range node.Attr {
+			result.Attr[i].Key = at.Key
+			result.Attr[i].Val = at.Val
+			result.Attr[i].Namespace = at.Namespace
+		}
+	}
+	return result
 }
 
 func isSameNode(node *html.Node, other dom.Node) bool {

@@ -23,7 +23,7 @@ func (e *Element) ParentElement() dom.Element     { return parentElement(e.node)
 func (e *Element) PreviousSibling() dom.ChildNode { return previousSibling(e.node) }
 func (e *Element) NextSibling() dom.ChildNode     { return nextSibling(e.node) }
 func (e *Element) TextContent() string            { return textContent(e.node) }
-func (e *Element) CloneNode(deep bool) dom.Node   { return cloneNode(e.node, deep) }
+func (e *Element) CloneNode(deep bool) dom.Node   { return htmlNodeToDomNode(cloneNode(e.node, deep)) }
 func (e *Element) IsSameNode(other dom.Node) bool { return isSameNode(e.node, other) }
 func (e *Element) Length() int {
 	c := e.node

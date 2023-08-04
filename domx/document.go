@@ -14,7 +14,7 @@ type Document struct {
 }
 
 func (d *Document) NodeType() dom.NodeType         { return nodeType(d.node.Type) }
-func (d *Document) CloneNode(deep bool) dom.Node   { return cloneNode(d.node, deep) }
+func (d *Document) CloneNode(deep bool) dom.Node   { return htmlNodeToDomNode(cloneNode(d.node, deep)) }
 func (d *Document) IsSameNode(other dom.Node) bool { return isSameNode(d.node, other) }
 func (d *Document) GetElementsByTagName(name string) dom.ElementCollection {
 	return getElementsByTagName(d.node, name)
@@ -30,7 +30,10 @@ func (d *Document) QuerySelectorAll(query string) dom.NodeList {
 }
 func (d *Document) Contains(other dom.Node) bool { return contains(d.node, other) }
 
-func (d *Document) TextContent() string { return textContent(d.node) }
+// TextContent returns an empty string.
+// The spec says it should return null
+// https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent
+func (d *Document) TextContent() string { return "" }
 
 // Document
 
