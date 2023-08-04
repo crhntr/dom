@@ -14,7 +14,7 @@ type Document struct {
 }
 
 func (d *Document) NodeType() dom.NodeType         { return nodeType(d.node.Type) }
-func (d *Document) CloneNode(deep bool) dom.Node   { return htmlNodeToDomNode(cloneNode(d.node, deep)) }
+func (d *Document) CloneNode(deep bool) dom.Node   { return NewNode(cloneNode(d.node, deep)) }
 func (d *Document) IsSameNode(other dom.Node) bool { return isSameNode(d.node, other) }
 func (d *Document) GetElementsByTagName(name string) dom.ElementCollection {
 	return getElementsByTagName(d.node, name)

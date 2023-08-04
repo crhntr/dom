@@ -30,7 +30,7 @@ func nodeType(nodeType html.NodeType) dom.NodeType {
 	}
 }
 
-func htmlNodeToDomNode(node *html.Node) dom.Node {
+func NewNode(node *html.Node) dom.Node {
 	if node == nil {
 		return nil
 	}
@@ -113,7 +113,7 @@ func (node *SiblingNodeList) Item(index int) dom.Node {
 	offset := 0
 	for c != nil {
 		if offset == index {
-			return htmlNodeToDomNode(c)
+			return NewNode(c)
 		}
 		offset++
 		c = c.NextSibling
@@ -142,7 +142,7 @@ func ownerDocument(node *html.Node) dom.Document {
 	}
 	return nil
 }
-func parentNode(node *html.Node) dom.Node           { return htmlNodeToDomNode(node.Parent) }
+func parentNode(node *html.Node) dom.Node           { return NewNode(node.Parent) }
 func parentElement(node *html.Node) dom.Element     { return htmlNodeToDomElement(node.Parent) }
 func hasChildNodes(node *html.Node) bool            { return node.FirstChild != nil }
 func childNodes(node *html.Node) dom.NodeList       { return (*SiblingNodeList)(node.FirstChild) }
@@ -411,7 +411,7 @@ type NodeListHTMLElements []*html.Node
 
 func (n NodeListHTMLElements) Length() int { return len(n) }
 
-func (n NodeListHTMLElements) Item(i int) dom.Node { return htmlNodeToDomNode(n[i]) }
+func (n NodeListHTMLElements) Item(i int) dom.Node { return NewNode(n[i]) }
 
 func closest(node *html.Node, selector string) dom.Element {
 	s := cascadia.MustCompile(selector)

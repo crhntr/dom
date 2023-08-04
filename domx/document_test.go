@@ -34,9 +34,9 @@ func TestDocument_CloneNode(t *testing.T) {
 
 		copied, ok := result.(*Document)
 		assert.True(t, ok, "correct type")
-		assert.False(t, copied.node == parsedDocument, "not the same *html.Node")
+		assert.False(t, copied.node == parsedDocument, "not the same *html.NewNode")
 		assert.NotNil(t, copied.node.FirstChild)
-		assert.False(t, copied.node.FirstChild == parsedDocument.FirstChild, "not the same child *html.Node")
+		assert.False(t, copied.node.FirstChild == parsedDocument.FirstChild, "not the same child *html.NewNode")
 	})
 	t.Run("not deep", func(t *testing.T) {
 		// language=html
@@ -49,7 +49,7 @@ func TestDocument_CloneNode(t *testing.T) {
 		copied, ok := result.(*Document)
 		assert.True(t, ok, "correct type")
 		assert.Nil(t, copied.node.FirstChild)
-		assert.False(t, copied.node == parsedDocument, "not the same *html.Node")
+		assert.False(t, copied.node == parsedDocument, "not the same *html.NewNode")
 	})
 }
 func TestDocument_IsSameNode(t *testing.T) {
