@@ -1,6 +1,7 @@
 package domx
 
 import (
+	"errors"
 	"strings"
 	"testing"
 
@@ -43,4 +44,21 @@ func parseDocument(t *testing.T, document, selector string) (*Document, *Element
 	return &Document{
 		node: parsedDocument,
 	}, result
+}
+
+func Test_recursiveTextContent_write_failure(t *testing.T) {
+	w := &writeError{}
+	text := &html.Node{
+		Type: html.TextNode,
+		Data: "failure",
+	}
+	require.Panics(t, func() {
+		recursiveTextContent(w, text)
+	})
+}
+
+type writeError struct{}
+
+func (w writeError) WriteString(string) (n int, err error) {
+	return 0, errors.New("lemon")
 }
