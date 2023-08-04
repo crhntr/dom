@@ -427,3 +427,22 @@ func matches(node *html.Node, selector string) bool {
 	s := cascadia.MustCompile(selector)
 	return s.Match(node)
 }
+
+func isNamed(node *html.Node, name string) bool {
+	if node == nil || node.Type != html.ElementNode {
+		return false
+	}
+	id := getAttribute(node, "id")
+	nm := getAttribute(node, "name")
+	return (id != "" && id == name) || (nm != "" && nm == name)
+}
+
+func getAttribute(node *html.Node, name string) string {
+	name = strings.ToLower(name)
+	for _, att := range node.Attr {
+		if att.Key == name {
+			return att.Val
+		}
+	}
+	return ""
+}

@@ -26,7 +26,7 @@ func (e *Element) TextContent() string            { return textContent(e.node) }
 func (e *Element) CloneNode(deep bool) dom.Node   { return NewNode(cloneNode(e.node, deep)) }
 func (e *Element) IsSameNode(other dom.Node) bool { return isSameNode(e.node, other) }
 func (e *Element) Length() int {
-	c := e.node
+	c := e.node.FirstChild
 	result := 0
 	for c != nil {
 		result++
@@ -79,16 +79,6 @@ func (e *Element) ID() string                      { return getAttribute(e.node,
 func (e *Element) ClassName() string               { return getAttribute(e.node, "class") }
 func (e *Element) GetAttribute(name string) string { return getAttribute(e.node, name) }
 
-func getAttribute(node *html.Node, name string) string {
-	name = strings.ToLower(name)
-	for _, att := range node.Attr {
-		if att.Key == name {
-			return att.Val
-		}
-	}
-	return ""
-}
-
 func (e *Element) SetAttribute(name, value string) {
 	name = strings.ToLower(name)
 	for index, att := range e.node.Attr {
@@ -135,15 +125,6 @@ func (e *Element) HasAttribute(name string) bool {
 
 func (e *Element) isNamed(name string) bool {
 	return isNamed(e.node, name)
-}
-
-func isNamed(node *html.Node, name string) bool {
-	if node == nil || node.Type != html.ElementNode {
-		return false
-	}
-	id := getAttribute(node, "id")
-	nm := getAttribute(node, "name")
-	return (id != "" && id == name) || (nm != "" && nm == name)
 }
 
 func (e *Element) SetInnerHTML(s string) {
