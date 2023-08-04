@@ -12,7 +12,8 @@ import (
 )
 
 func TestElement_NodeType(t *testing.T) {
-	parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html><head><title></title></head><body><span></span></body</html>`))
+	// language=html
+	parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`))
 	require.NoError(t, err)
 	document := Element{
 		node: parsedDocument.FirstChild.NextSibling,

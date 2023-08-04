@@ -67,6 +67,7 @@ func TestDocument_IsSameNode(t *testing.T) {
 	})
 
 	t.Run("same html different address", func(t *testing.T) {
+		// language=html
 		in := `<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`
 		parsedDocument1, err := html.Parse(strings.NewReader(in))
 		require.NoError(t, err)
