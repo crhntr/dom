@@ -130,7 +130,7 @@ type NodeList interface {
 }
 
 type Text interface {
-	Node
+	ChildNode
 
 	Data() string
 	SetData(string)
