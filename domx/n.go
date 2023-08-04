@@ -315,7 +315,7 @@ func (n NodeListHTMLElements) Item(i int) dom.Node { return htmlNodeToDomNode(n[
 
 func closest(node *html.Node, selector string) dom.Element {
 	s := cascadia.MustCompile(selector)
-	for p := node.Parent; p != nil; p = p.Parent {
+	for p := node; p != nil; p = p.Parent {
 		if s.Match(p) {
 			return htmlNodeToDomElement(p)
 		}

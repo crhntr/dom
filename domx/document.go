@@ -13,8 +13,6 @@ type Document struct {
 	node *html.Node
 }
 
-// Node
-
 func (d *Document) NodeType() dom.NodeType         { return nodeType(d.node.Type) }
 func (d *Document) CloneNode(deep bool) dom.Node   { return cloneNode(d.node, deep) }
 func (d *Document) IsSameNode(other dom.Node) bool { return isSameNode(d.node, other) }
