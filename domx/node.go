@@ -396,9 +396,11 @@ func hasClasses(elementClassesStr, classesStr string) bool {
 }
 
 func querySelector(node *html.Node, query string) dom.Element {
-	return &Element{
-		node: cascadia.Query(node, cascadia.MustCompile(query)),
+	result := cascadia.Query(node, cascadia.MustCompile(query))
+	if result == nil {
+		return nil
 	}
+	return &Element{node: result}
 }
 
 func querySelectorAll(node *html.Node, query string) dom.NodeList {

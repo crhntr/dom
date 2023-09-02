@@ -278,6 +278,9 @@ func TestDocument_QuerySelector(t *testing.T) {
 
 	result := document.QuerySelector(`#1 [data-find-me="x"]`)
 	assert.Equal(t, "x1", result.ID())
+
+	shouldNotBeFound := document.QuerySelector(`#banana-banana-banana`)
+	assert.Nil(t, shouldNotBeFound)
 }
 
 func TestDocument_QuerySelectorAll(t *testing.T) {
