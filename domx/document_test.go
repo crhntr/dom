@@ -303,8 +303,8 @@ func TestDocument_QuerySelectorAll(t *testing.T) {
 
 	result := document.QuerySelectorAll(`#1 [data-find-me]`)
 	assert.Equal(t, result.Length(), 2)
-	assert.Equal(t, "x1", result.Item(0).(dom.Element).ID())
-	assert.Equal(t, "x2", result.Item(1).(dom.Element).ID())
+	assert.Equal(t, "x1", result.Item(0).ID())
+	assert.Equal(t, "x2", result.Item(1).ID())
 }
 
 func TestDocument_Contains(t *testing.T) {

@@ -142,14 +142,14 @@ func ownerDocument(node *html.Node) dom.Document {
 	}
 	return nil
 }
-func parentNode(node *html.Node) dom.Node           { return NewNode(node.Parent) }
-func parentElement(node *html.Node) dom.Element     { return htmlNodeToDomElement(node.Parent) }
-func hasChildNodes(node *html.Node) bool            { return node.FirstChild != nil }
-func childNodes(node *html.Node) dom.NodeList       { return (*SiblingNodeList)(node.FirstChild) }
-func firstChild(node *html.Node) dom.ChildNode      { return htmlNodeToDomChildNode(node.FirstChild) }
-func lastChild(node *html.Node) dom.ChildNode       { return htmlNodeToDomChildNode(node.LastChild) }
-func previousSibling(node *html.Node) dom.ChildNode { return htmlNodeToDomChildNode(node.PrevSibling) }
-func nextSibling(node *html.Node) dom.ChildNode     { return htmlNodeToDomChildNode(node.NextSibling) }
+func parentNode(node *html.Node) dom.Node               { return NewNode(node.Parent) }
+func parentElement(node *html.Node) dom.Element         { return htmlNodeToDomElement(node.Parent) }
+func hasChildNodes(node *html.Node) bool                { return node.FirstChild != nil }
+func childNodes(node *html.Node) dom.NodeList[dom.Node] { return (*SiblingNodeList)(node.FirstChild) }
+func firstChild(node *html.Node) dom.ChildNode          { return htmlNodeToDomChildNode(node.FirstChild) }
+func lastChild(node *html.Node) dom.ChildNode           { return htmlNodeToDomChildNode(node.LastChild) }
+func previousSibling(node *html.Node) dom.ChildNode     { return htmlNodeToDomChildNode(node.PrevSibling) }
+func nextSibling(node *html.Node) dom.ChildNode         { return htmlNodeToDomChildNode(node.NextSibling) }
 
 func textContent(node *html.Node) string {
 	var buf bytes.Buffer
@@ -403,17 +403,21 @@ func querySelector(node *html.Node, query string) dom.Element {
 	return &Element{node: result}
 }
 
-func querySelectorAll(node *html.Node, query string) dom.NodeList {
+func querySelectorAll(node *html.Node, query string) dom.NodeList[dom.Element] {
 	return NodeListHTMLElements(cascadia.QueryAll(node, cascadia.MustCompile(query)))
 }
 
-var _ dom.NodeList = NodeListHTMLElements(nil)
+var _ dom.NodeList[dom.Element] = NodeListHTMLElements(nil)
 
 type NodeListHTMLElements []*html.Node
 
 func (n NodeListHTMLElements) Length() int { return len(n) }
 
-func (n NodeListHTMLElements) Item(i int) dom.Node { return NewNode(n[i]) }
+func (n NodeListHTMLElements) Item(i int) dom.Element {
+	return &Element{
+		node: n[i],
+	}
+}
 
 func closest(node *html.Node, selector string) dom.Element {
 	s := cascadia.MustCompile(selector)

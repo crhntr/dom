@@ -124,9 +124,9 @@ func (nt NodeType) String() string {
 	}
 }
 
-type NodeList interface {
+type NodeList[T Node] interface {
 	Length() int
-	Item(int) Node
+	Item(int) T
 }
 
 type Text interface {
@@ -171,7 +171,7 @@ type ParentNode interface {
 	// the following methods are from node; however, they only make sense for parent nodes
 
 	HasChildNodes() bool
-	ChildNodes() NodeList
+	ChildNodes() NodeList[Node]
 	FirstChild() ChildNode
 	LastChild() ChildNode
 	InsertBefore(node, child ChildNode) ChildNode
@@ -187,7 +187,7 @@ type ElementQueries interface {
 	GetElementsByClassName(name string) ElementCollection
 
 	QuerySelector(query string) Element
-	QuerySelectorAll(query string) NodeList
+	QuerySelectorAll(query string) NodeList[Element]
 }
 
 // Element is based on

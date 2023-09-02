@@ -52,17 +52,17 @@ func (e *Element) GetElementsByClassName(name string) dom.ElementCollection {
 }
 
 func (e *Element) QuerySelector(query string) dom.Element { return querySelector(e.node, query) }
-func (e *Element) QuerySelectorAll(query string) dom.NodeList {
+func (e *Element) QuerySelectorAll(query string) dom.NodeList[dom.Element] {
 	return querySelectorAll(e.node, query)
 }
 func (e *Element) Closest(selector string) dom.Element { return closest(e.node, selector) }
 func (e *Element) Matches(selector string) bool        { return matches(e.node, selector) }
 
-func (e *Element) HasChildNodes() bool          { return hasChildNodes(e.node) }
-func (e *Element) ChildNodes() dom.NodeList     { return childNodes(e.node) }
-func (e *Element) FirstChild() dom.ChildNode    { return firstChild(e.node) }
-func (e *Element) LastChild() dom.ChildNode     { return lastChild(e.node) }
-func (e *Element) Contains(other dom.Node) bool { return contains(e.node, other) }
+func (e *Element) HasChildNodes() bool                { return hasChildNodes(e.node) }
+func (e *Element) ChildNodes() dom.NodeList[dom.Node] { return childNodes(e.node) }
+func (e *Element) FirstChild() dom.ChildNode          { return firstChild(e.node) }
+func (e *Element) LastChild() dom.ChildNode           { return lastChild(e.node) }
+func (e *Element) Contains(other dom.Node) bool       { return contains(e.node, other) }
 func (e *Element) InsertBefore(node, child dom.ChildNode) dom.ChildNode {
 	return insertBefore(e.node, node, child)
 }

@@ -25,7 +25,7 @@ func (d *Document) GetElementsByClassName(name string) dom.ElementCollection {
 func (d *Document) QuerySelector(query string) dom.Element {
 	return querySelector(d.node, query)
 }
-func (d *Document) QuerySelectorAll(query string) dom.NodeList {
+func (d *Document) QuerySelectorAll(query string) dom.NodeList[dom.Element] {
 	return querySelectorAll(d.node, query)
 }
 func (d *Document) Contains(other dom.Node) bool { return contains(d.node, other) }
