@@ -19,12 +19,15 @@ func (d *Document) IsSameNode(other dom.Node) bool { return isSameNode(d.node, o
 func (d *Document) GetElementsByTagName(name string) dom.ElementCollection {
 	return getElementsByTagName(d.node, name)
 }
+
 func (d *Document) GetElementsByClassName(name string) dom.ElementCollection {
 	return getElementsByClassName(d.node, name)
 }
+
 func (d *Document) QuerySelector(query string) dom.Element {
 	return querySelector(d.node, query)
 }
+
 func (d *Document) QuerySelectorAll(query string) dom.NodeList[dom.Element] {
 	return querySelectorAll(d.node, query)
 }

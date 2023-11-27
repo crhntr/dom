@@ -47,6 +47,7 @@ func (e *Element) ReplaceChildren(nodes ...dom.ChildNode) { replaceChildren(e.no
 func (e *Element) GetElementsByTagName(name string) dom.ElementCollection {
 	return getElementsByTagName(e.node, name)
 }
+
 func (e *Element) GetElementsByClassName(name string) dom.ElementCollection {
 	return getElementsByClassName(e.node, name)
 }

@@ -47,6 +47,7 @@ func TestDocument_CloneNode(t *testing.T) {
 		assert.False(t, copied.node == document.node, "not the same *html.NewNode")
 	})
 }
+
 func TestDocument_IsSameNode(t *testing.T) {
 	t.Run("same", func(t *testing.T) {
 		// language=html
