@@ -124,10 +124,6 @@ func (e *Element) HasAttribute(name string) bool {
 	return false
 }
 
-func (e *Element) isNamed(name string) bool {
-	return isNamed(e.node, name)
-}
-
 func (e *Element) SetInnerHTML(s string) {
 	nodes, err := html.ParseFragment(strings.NewReader(s), &html.Node{Type: html.ElementNode})
 	if err != nil {
