@@ -1,4 +1,4 @@
-package dom
+package spec
 
 // Node is based on a subset of the methods and types in
 // https://dom.spec.whatwg.org/#interface-node as of 2021-12-10

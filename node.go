@@ -1,4 +1,4 @@
-package domx
+package dom
 
 import (
 	"bytes"
@@ -8,29 +8,29 @@ import (
 	"github.com/andybalholm/cascadia"
 	"golang.org/x/net/html"
 
-	"github.com/crhntr/dom"
+	"github.com/crhntr/dom/spec"
 )
 
-func nodeType(nodeType html.NodeType) dom.NodeType {
+func nodeType(nodeType html.NodeType) spec.NodeType {
 	switch nodeType {
 	case html.TextNode:
-		return dom.NodeTypeText
+		return spec.NodeTypeText
 	case html.DocumentNode:
-		return dom.NodeTypeDocument
+		return spec.NodeTypeDocument
 	case html.ElementNode:
-		return dom.NodeTypeElement
+		return spec.NodeTypeElement
 	case html.CommentNode:
-		return dom.NodeTypeComment
+		return spec.NodeTypeComment
 	case html.DoctypeNode:
-		return dom.NodeTypeDocumentType
+		return spec.NodeTypeDocumentType
 	default:
 		fallthrough
 	case html.ErrorNode, html.RawNode:
-		return dom.NodeTypeUnknown
+		return spec.NodeTypeUnknown
 	}
 }
 
-func NewNode(node *html.Node) dom.Node {
+func NewNode(node *html.Node) spec.Node {
 	if node == nil {
 		return nil
 	}
@@ -46,7 +46,7 @@ func NewNode(node *html.Node) dom.Node {
 	}
 }
 
-func htmlNodeToDomChildNode(node *html.Node) dom.ChildNode {
+func htmlNodeToDomChildNode(node *html.Node) spec.ChildNode {
 	if node == nil {
 		return nil
 	}
@@ -60,14 +60,14 @@ func htmlNodeToDomChildNode(node *html.Node) dom.ChildNode {
 	}
 }
 
-func htmlNodeToDomElement(node *html.Node) dom.Element {
+func htmlNodeToDomElement(node *html.Node) spec.Element {
 	if node == nil {
 		return nil
 	}
 	return &Element{node: node}
 }
 
-func domNodeToHTMLNode(node dom.Node) *html.Node {
+func domNodeToHTMLNode(node spec.Node) *html.Node {
 	switch ot := node.(type) {
 	case *Element:
 		return ot.node
@@ -108,7 +108,7 @@ func (node *SiblingNodeList) Length() int {
 	return result
 }
 
-func (node *SiblingNodeList) Item(index int) dom.Node {
+func (node *SiblingNodeList) Item(index int) spec.Node {
 	c := (*html.Node)(node)
 	offset := 0
 	for c != nil {
@@ -132,7 +132,7 @@ func isConnected(node *html.Node) bool {
 	return false
 }
 
-func ownerDocument(node *html.Node) dom.Document {
+func ownerDocument(node *html.Node) spec.Document {
 	p := node.Parent
 	for p != nil {
 		if p.Type == html.DocumentNode {
@@ -142,14 +142,14 @@ func ownerDocument(node *html.Node) dom.Document {
 	}
 	return nil
 }
-func parentNode(node *html.Node) dom.Node               { return NewNode(node.Parent) }
-func parentElement(node *html.Node) dom.Element         { return htmlNodeToDomElement(node.Parent) }
-func hasChildNodes(node *html.Node) bool                { return node.FirstChild != nil }
-func childNodes(node *html.Node) dom.NodeList[dom.Node] { return (*SiblingNodeList)(node.FirstChild) }
-func firstChild(node *html.Node) dom.ChildNode          { return htmlNodeToDomChildNode(node.FirstChild) }
-func lastChild(node *html.Node) dom.ChildNode           { return htmlNodeToDomChildNode(node.LastChild) }
-func previousSibling(node *html.Node) dom.ChildNode     { return htmlNodeToDomChildNode(node.PrevSibling) }
-func nextSibling(node *html.Node) dom.ChildNode         { return htmlNodeToDomChildNode(node.NextSibling) }
+func parentNode(node *html.Node) spec.Node                { return NewNode(node.Parent) }
+func parentElement(node *html.Node) spec.Element          { return htmlNodeToDomElement(node.Parent) }
+func hasChildNodes(node *html.Node) bool                  { return node.FirstChild != nil }
+func childNodes(node *html.Node) spec.NodeList[spec.Node] { return (*SiblingNodeList)(node.FirstChild) }
+func firstChild(node *html.Node) spec.ChildNode           { return htmlNodeToDomChildNode(node.FirstChild) }
+func lastChild(node *html.Node) spec.ChildNode            { return htmlNodeToDomChildNode(node.LastChild) }
+func previousSibling(node *html.Node) spec.ChildNode      { return htmlNodeToDomChildNode(node.PrevSibling) }
+func nextSibling(node *html.Node) spec.ChildNode          { return htmlNodeToDomChildNode(node.NextSibling) }
 
 func textContent(node *html.Node) string {
 	var buf bytes.Buffer
@@ -194,7 +194,7 @@ func cloneNode(node *html.Node, deep bool) *html.Node {
 	return result
 }
 
-func isSameNode(node *html.Node, other dom.Node) bool {
+func isSameNode(node *html.Node, other spec.Node) bool {
 	if node == nil || other == nil {
 		return false
 	}
@@ -202,7 +202,7 @@ func isSameNode(node *html.Node, other dom.Node) bool {
 	return n != nil && node == n
 }
 
-func contains(node *html.Node, other dom.Node) bool {
+func contains(node *html.Node, other spec.Node) bool {
 	o := domNodeToHTMLNode(other)
 	if o == nil {
 		return false
@@ -217,7 +217,7 @@ func contains(node *html.Node, other dom.Node) bool {
 	return found
 }
 
-func insertBefore(parent *html.Node, node, child dom.ChildNode) dom.ChildNode {
+func insertBefore(parent *html.Node, node, child spec.ChildNode) spec.ChildNode {
 	n := domNodeToHTMLNode(node)
 	c := domNodeToHTMLNode(child)
 	if n.Parent != nil {
@@ -227,7 +227,7 @@ func insertBefore(parent *html.Node, node, child dom.ChildNode) dom.ChildNode {
 	return htmlNodeToDomChildNode(n)
 }
 
-func appendChild(parent *html.Node, node dom.ChildNode) dom.ChildNode {
+func appendChild(parent *html.Node, node spec.ChildNode) spec.ChildNode {
 	n := domNodeToHTMLNode(node)
 	if n.Parent != nil {
 		n.Parent.RemoveChild(n)
@@ -236,7 +236,7 @@ func appendChild(parent *html.Node, node dom.ChildNode) dom.ChildNode {
 	return htmlNodeToDomChildNode(n)
 }
 
-func replaceChild(parent *html.Node, node, child dom.ChildNode) dom.ChildNode {
+func replaceChild(parent *html.Node, node, child spec.ChildNode) spec.ChildNode {
 	n := domNodeToHTMLNode(node)
 	c := domNodeToHTMLNode(child)
 	if c.Parent != parent {
@@ -265,17 +265,17 @@ func replaceChild(parent *html.Node, node, child dom.ChildNode) dom.ChildNode {
 	return htmlNodeToDomChildNode(c)
 }
 
-func removeChild(parent *html.Node, node dom.ChildNode) dom.ChildNode {
+func removeChild(parent *html.Node, node spec.ChildNode) spec.ChildNode {
 	n := domNodeToHTMLNode(node)
 	parent.RemoveChild(n)
 	return htmlNodeToDomChildNode(n)
 }
 
-func children(parent *html.Node) dom.ElementCollection {
+func children(parent *html.Node) spec.ElementCollection {
 	return SiblingElements{firstChild: parent.FirstChild}
 }
 
-func firstElementChild(node *html.Node) dom.Element {
+func firstElementChild(node *html.Node) spec.Element {
 	child := node.FirstChild
 	for child != nil {
 		if child.Type == html.ElementNode {
@@ -286,7 +286,7 @@ func firstElementChild(node *html.Node) dom.Element {
 	return nil
 }
 
-func lastElementChild(node *html.Node) dom.Element {
+func lastElementChild(node *html.Node) spec.Element {
 	child := node.LastChild
 	for child != nil {
 		if child.Type == html.ElementNode {
@@ -311,7 +311,7 @@ func childElementCount(node *html.Node) int {
 	return result
 }
 
-func prependNodes(node *html.Node, nodes []dom.ChildNode) {
+func prependNodes(node *html.Node, nodes []spec.ChildNode) {
 	for i := range nodes {
 		dn := nodes[len(nodes)-1-i]
 		n := domNodeToHTMLNode(dn)
@@ -330,14 +330,14 @@ func prependNodes(node *html.Node, nodes []dom.ChildNode) {
 	}
 }
 
-func appendNodes(parent *html.Node, nodes []dom.ChildNode) {
+func appendNodes(parent *html.Node, nodes []spec.ChildNode) {
 	for _, node := range nodes {
 		n := domNodeToHTMLNode(node)
 		parent.AppendChild(n)
 	}
 }
 
-func replaceChildren(parent *html.Node, nodes []dom.ChildNode) {
+func replaceChildren(parent *html.Node, nodes []spec.ChildNode) {
 	clearChildren(parent)
 	for _, node := range nodes {
 		n := domNodeToHTMLNode(node)
@@ -356,7 +356,7 @@ func clearChildren(node *html.Node) {
 	node.LastChild = nil
 }
 
-func getElementsByTagName(node *html.Node, name string) dom.ElementCollection {
+func getElementsByTagName(node *html.Node, name string) spec.ElementCollection {
 	name = strings.ToUpper(name)
 	var list ElementList
 	walkNodes(node, func(n *html.Node) bool {
@@ -368,7 +368,7 @@ func getElementsByTagName(node *html.Node, name string) dom.ElementCollection {
 	return list
 }
 
-func getElementsByClassName(node *html.Node, name string) dom.ElementCollection {
+func getElementsByClassName(node *html.Node, name string) spec.ElementCollection {
 	var list ElementList
 	walkNodes(node, func(n *html.Node) bool {
 		if hasClasses(getAttribute(n, "class"), name) {
@@ -395,7 +395,7 @@ func hasClasses(elementClassesStr, classesStr string) bool {
 	return len(set) == 0
 }
 
-func querySelector(node *html.Node, query string) dom.Element {
+func querySelector(node *html.Node, query string) spec.Element {
 	result := cascadia.Query(node, cascadia.MustCompile(query))
 	if result == nil {
 		return nil
@@ -403,23 +403,23 @@ func querySelector(node *html.Node, query string) dom.Element {
 	return &Element{node: result}
 }
 
-func querySelectorAll(node *html.Node, query string) dom.NodeList[dom.Element] {
+func querySelectorAll(node *html.Node, query string) spec.NodeList[spec.Element] {
 	return NodeListHTMLElements(cascadia.QueryAll(node, cascadia.MustCompile(query)))
 }
 
-var _ dom.NodeList[dom.Element] = NodeListHTMLElements(nil)
+var _ spec.NodeList[spec.Element] = NodeListHTMLElements(nil)
 
 type NodeListHTMLElements []*html.Node
 
 func (n NodeListHTMLElements) Length() int { return len(n) }
 
-func (n NodeListHTMLElements) Item(i int) dom.Element {
+func (n NodeListHTMLElements) Item(i int) spec.Element {
 	return &Element{
 		node: n[i],
 	}
 }
 
-func closest(node *html.Node, selector string) dom.Element {
+func closest(node *html.Node, selector string) spec.Element {
 	s := cascadia.MustCompile(selector)
 	for p := node; p != nil; p = p.Parent {
 		if s.Match(p) {

@@ -1,4 +1,4 @@
-package domx
+package dom
 
 import (
 	"strings"
@@ -9,7 +9,7 @@ import (
 
 	"golang.org/x/net/html"
 
-	"github.com/crhntr/dom"
+	"github.com/crhntr/dom/spec"
 )
 
 func TestDocument_NodeType(t *testing.T) {
@@ -17,7 +17,7 @@ func TestDocument_NodeType(t *testing.T) {
 	textHTML := `<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`
 	document, _ := parseDocument(t, textHTML, "")
 
-	assert.Equal(t, dom.NodeTypeDocument, document.NodeType())
+	assert.Equal(t, spec.NodeTypeDocument, document.NodeType())
 }
 
 func TestDocument_CloneNode(t *testing.T) {

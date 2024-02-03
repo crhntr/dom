@@ -1,4 +1,4 @@
-package domx
+package dom
 
 import (
 	"strings"
@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"golang.org/x/net/html"
 
-	"github.com/crhntr/dom"
+	"github.com/crhntr/dom/spec"
 )
 
 func TestElement_NodeType(t *testing.T) {
@@ -19,7 +19,7 @@ func TestElement_NodeType(t *testing.T) {
 		node: parsedDocument.FirstChild.NextSibling,
 	}
 
-	assert.Equal(t, dom.NodeTypeElement, document.NodeType())
+	assert.Equal(t, spec.NodeTypeElement, document.NodeType())
 }
 
 func TestElement_IsConnected(t *testing.T) {
@@ -90,8 +90,8 @@ func TestElement_ParentNode(t *testing.T) {
 
 	parent := app.ParentNode()
 	require.NotNil(t, parent)
-	require.Equal(t, dom.NodeTypeDocument, parent.NodeType())
-	_, ok := parent.(dom.Document)
+	require.Equal(t, spec.NodeTypeDocument, parent.NodeType())
+	_, ok := parent.(spec.Document)
 	require.True(t, ok)
 }
 

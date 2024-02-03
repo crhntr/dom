@@ -1,4 +1,4 @@
-package domx
+package dom
 
 import (
 	"errors"
@@ -10,22 +10,22 @@ import (
 	"github.com/stretchr/testify/require"
 	"golang.org/x/net/html"
 
-	"github.com/crhntr/dom"
+	"github.com/crhntr/dom/spec"
 )
 
 func Test_nodeType(t *testing.T) {
 	for _, tt := range []struct {
 		HTMLNodeType html.NodeType
-		DOMNodeType  dom.NodeType
+		DOMNodeType  spec.NodeType
 	}{
-		{html.ElementNode, dom.NodeTypeElement},
-		{html.CommentNode, dom.NodeTypeComment},
-		{html.DocumentNode, dom.NodeTypeDocument},
-		{html.DoctypeNode, dom.NodeTypeDocumentType},
+		{html.ElementNode, spec.NodeTypeElement},
+		{html.CommentNode, spec.NodeTypeComment},
+		{html.DocumentNode, spec.NodeTypeDocument},
+		{html.DoctypeNode, spec.NodeTypeDocumentType},
 
-		{html.NodeType(100000), dom.NodeTypeUnknown},
-		{html.ErrorNode, dom.NodeTypeUnknown},
-		{html.RawNode, dom.NodeTypeUnknown},
+		{html.NodeType(100000), spec.NodeTypeUnknown},
+		{html.ErrorNode, spec.NodeTypeUnknown},
+		{html.RawNode, spec.NodeTypeUnknown},
 	} {
 		assert.Equal(t, tt.DOMNodeType, nodeType(tt.HTMLNodeType))
 	}

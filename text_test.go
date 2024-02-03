@@ -1,4 +1,4 @@
-package domx
+package dom
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"golang.org/x/net/html"
 
-	"github.com/crhntr/dom"
+	"github.com/crhntr/dom/spec"
 )
 
 func TestText_Data(t *testing.T) {
@@ -33,7 +33,7 @@ func TestText_NodeType(t *testing.T) {
 			node: &html.Node{Type: html.TextNode},
 		}
 
-		assert.Equal(t, dom.NodeTypeText, textNode.NodeType())
+		assert.Equal(t, spec.NodeTypeText, textNode.NodeType())
 	})
 
 	t.Run("mismatched node type", func(t *testing.T) {
@@ -41,7 +41,7 @@ func TestText_NodeType(t *testing.T) {
 			node: &html.Node{Type: html.DocumentNode},
 		}
 
-		assert.Equal(t, dom.NodeTypeDocument, textNode.NodeType())
+		assert.Equal(t, spec.NodeTypeDocument, textNode.NodeType())
 	})
 }
 

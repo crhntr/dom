@@ -1,4 +1,4 @@
-package domx
+package dom
 
 import (
 	"strings"
@@ -6,32 +6,32 @@ import (
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 
-	"github.com/crhntr/dom"
+	"github.com/crhntr/dom/spec"
 )
 
 type Document struct {
 	node *html.Node
 }
 
-func (d *Document) NodeType() dom.NodeType         { return nodeType(d.node.Type) }
-func (d *Document) CloneNode(deep bool) dom.Node   { return NewNode(cloneNode(d.node, deep)) }
-func (d *Document) IsSameNode(other dom.Node) bool { return isSameNode(d.node, other) }
-func (d *Document) GetElementsByTagName(name string) dom.ElementCollection {
+func (d *Document) NodeType() spec.NodeType         { return nodeType(d.node.Type) }
+func (d *Document) CloneNode(deep bool) spec.Node   { return NewNode(cloneNode(d.node, deep)) }
+func (d *Document) IsSameNode(other spec.Node) bool { return isSameNode(d.node, other) }
+func (d *Document) GetElementsByTagName(name string) spec.ElementCollection {
 	return getElementsByTagName(d.node, name)
 }
 
-func (d *Document) GetElementsByClassName(name string) dom.ElementCollection {
+func (d *Document) GetElementsByClassName(name string) spec.ElementCollection {
 	return getElementsByClassName(d.node, name)
 }
 
-func (d *Document) QuerySelector(query string) dom.Element {
+func (d *Document) QuerySelector(query string) spec.Element {
 	return querySelector(d.node, query)
 }
 
-func (d *Document) QuerySelectorAll(query string) dom.NodeList[dom.Element] {
+func (d *Document) QuerySelectorAll(query string) spec.NodeList[spec.Element] {
 	return querySelectorAll(d.node, query)
 }
-func (d *Document) Contains(other dom.Node) bool { return contains(d.node, other) }
+func (d *Document) Contains(other spec.Node) bool { return contains(d.node, other) }
 
 // TextContent returns an empty string.
 // The spec says it should return null
@@ -40,7 +40,7 @@ func (d *Document) TextContent() string { return "" }
 
 // Document
 
-func (*Document) CreateElement(localName string) dom.Element {
+func (*Document) CreateElement(localName string) spec.Element {
 	localName = strings.ToLower(localName)
 	return &Element{
 		node: &html.Node{
@@ -51,7 +51,7 @@ func (*Document) CreateElement(localName string) dom.Element {
 	}
 }
 
-func (*Document) CreateElementIs(localName, is string) dom.Element {
+func (*Document) CreateElementIs(localName, is string) spec.Element {
 	localName = strings.ToLower(localName)
 	return &Element{
 		node: &html.Node{
@@ -63,7 +63,7 @@ func (*Document) CreateElementIs(localName, is string) dom.Element {
 	}
 }
 
-func (*Document) CreateTextNode(text string) dom.Text {
+func (*Document) CreateTextNode(text string) spec.Text {
 	return &Text{
 		node: &html.Node{
 			Type: html.TextNode,

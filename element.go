@@ -1,4 +1,4 @@
-package domx
+package dom
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 
 	"golang.org/x/net/html"
 
-	"github.com/crhntr/dom"
+	"github.com/crhntr/dom/spec"
 )
 
 type Element struct {
@@ -15,16 +15,16 @@ type Element struct {
 
 // NewNode
 
-func (e *Element) NodeType() dom.NodeType         { return nodeType(e.node.Type) }
-func (e *Element) IsConnected() bool              { return isConnected(e.node) }
-func (e *Element) OwnerDocument() dom.Document    { return ownerDocument(e.node) }
-func (e *Element) ParentNode() dom.Node           { return parentNode(e.node) }
-func (e *Element) ParentElement() dom.Element     { return parentElement(e.node) }
-func (e *Element) PreviousSibling() dom.ChildNode { return previousSibling(e.node) }
-func (e *Element) NextSibling() dom.ChildNode     { return nextSibling(e.node) }
-func (e *Element) TextContent() string            { return textContent(e.node) }
-func (e *Element) CloneNode(deep bool) dom.Node   { return NewNode(cloneNode(e.node, deep)) }
-func (e *Element) IsSameNode(other dom.Node) bool { return isSameNode(e.node, other) }
+func (e *Element) NodeType() spec.NodeType         { return nodeType(e.node.Type) }
+func (e *Element) IsConnected() bool               { return isConnected(e.node) }
+func (e *Element) OwnerDocument() spec.Document    { return ownerDocument(e.node) }
+func (e *Element) ParentNode() spec.Node           { return parentNode(e.node) }
+func (e *Element) ParentElement() spec.Element     { return parentElement(e.node) }
+func (e *Element) PreviousSibling() spec.ChildNode { return previousSibling(e.node) }
+func (e *Element) NextSibling() spec.ChildNode     { return nextSibling(e.node) }
+func (e *Element) TextContent() string             { return textContent(e.node) }
+func (e *Element) CloneNode(deep bool) spec.Node   { return NewNode(cloneNode(e.node, deep)) }
+func (e *Element) IsSameNode(other spec.Node) bool { return isSameNode(e.node, other) }
 func (e *Element) Length() int {
 	c := e.node.FirstChild
 	result := 0
@@ -37,41 +37,41 @@ func (e *Element) Length() int {
 
 // ParentNode
 
-func (e *Element) Children() dom.ElementCollection        { return children(e.node) }
-func (e *Element) FirstElementChild() dom.Element         { return firstElementChild(e.node) }
-func (e *Element) LastElementChild() dom.Element          { return lastElementChild(e.node) }
-func (e *Element) ChildElementCount() int                 { return childElementCount(e.node) }
-func (e *Element) Prepend(nodes ...dom.ChildNode)         { prependNodes(e.node, nodes) }
-func (e *Element) Append(nodes ...dom.ChildNode)          { appendNodes(e.node, nodes) }
-func (e *Element) ReplaceChildren(nodes ...dom.ChildNode) { replaceChildren(e.node, nodes) }
-func (e *Element) GetElementsByTagName(name string) dom.ElementCollection {
+func (e *Element) Children() spec.ElementCollection        { return children(e.node) }
+func (e *Element) FirstElementChild() spec.Element         { return firstElementChild(e.node) }
+func (e *Element) LastElementChild() spec.Element          { return lastElementChild(e.node) }
+func (e *Element) ChildElementCount() int                  { return childElementCount(e.node) }
+func (e *Element) Prepend(nodes ...spec.ChildNode)         { prependNodes(e.node, nodes) }
+func (e *Element) Append(nodes ...spec.ChildNode)          { appendNodes(e.node, nodes) }
+func (e *Element) ReplaceChildren(nodes ...spec.ChildNode) { replaceChildren(e.node, nodes) }
+func (e *Element) GetElementsByTagName(name string) spec.ElementCollection {
 	return getElementsByTagName(e.node, name)
 }
 
-func (e *Element) GetElementsByClassName(name string) dom.ElementCollection {
+func (e *Element) GetElementsByClassName(name string) spec.ElementCollection {
 	return getElementsByClassName(e.node, name)
 }
 
-func (e *Element) QuerySelector(query string) dom.Element { return querySelector(e.node, query) }
-func (e *Element) QuerySelectorAll(query string) dom.NodeList[dom.Element] {
+func (e *Element) QuerySelector(query string) spec.Element { return querySelector(e.node, query) }
+func (e *Element) QuerySelectorAll(query string) spec.NodeList[spec.Element] {
 	return querySelectorAll(e.node, query)
 }
-func (e *Element) Closest(selector string) dom.Element { return closest(e.node, selector) }
-func (e *Element) Matches(selector string) bool        { return matches(e.node, selector) }
+func (e *Element) Closest(selector string) spec.Element { return closest(e.node, selector) }
+func (e *Element) Matches(selector string) bool         { return matches(e.node, selector) }
 
-func (e *Element) HasChildNodes() bool                { return hasChildNodes(e.node) }
-func (e *Element) ChildNodes() dom.NodeList[dom.Node] { return childNodes(e.node) }
-func (e *Element) FirstChild() dom.ChildNode          { return firstChild(e.node) }
-func (e *Element) LastChild() dom.ChildNode           { return lastChild(e.node) }
-func (e *Element) Contains(other dom.Node) bool       { return contains(e.node, other) }
-func (e *Element) InsertBefore(node, child dom.ChildNode) dom.ChildNode {
+func (e *Element) HasChildNodes() bool                  { return hasChildNodes(e.node) }
+func (e *Element) ChildNodes() spec.NodeList[spec.Node] { return childNodes(e.node) }
+func (e *Element) FirstChild() spec.ChildNode           { return firstChild(e.node) }
+func (e *Element) LastChild() spec.ChildNode            { return lastChild(e.node) }
+func (e *Element) Contains(other spec.Node) bool        { return contains(e.node, other) }
+func (e *Element) InsertBefore(node, child spec.ChildNode) spec.ChildNode {
 	return insertBefore(e.node, node, child)
 }
-func (e *Element) AppendChild(node dom.ChildNode) dom.ChildNode { return appendChild(e.node, node) }
-func (e *Element) ReplaceChild(node, child dom.ChildNode) dom.ChildNode {
+func (e *Element) AppendChild(node spec.ChildNode) spec.ChildNode { return appendChild(e.node, node) }
+func (e *Element) ReplaceChild(node, child spec.ChildNode) spec.ChildNode {
 	return replaceChild(e.node, node, child)
 }
-func (e *Element) RemoveChild(node dom.ChildNode) dom.ChildNode { return removeChild(e.node, node) }
+func (e *Element) RemoveChild(node spec.ChildNode) spec.ChildNode { return removeChild(e.node, node) }
 
 // Element
 
@@ -193,7 +193,7 @@ func (list SiblingElements) Length() int {
 	return result
 }
 
-func (list SiblingElements) Item(index int) dom.Element {
+func (list SiblingElements) Item(index int) spec.Element {
 	childIndex := 0
 	for c := list.firstChild; c != nil; c = c.NextSibling {
 		if c.Type != html.ElementNode {
@@ -207,7 +207,7 @@ func (list SiblingElements) Item(index int) dom.Element {
 	return nil
 }
 
-func (list SiblingElements) NamedItem(name string) dom.Element {
+func (list SiblingElements) NamedItem(name string) spec.Element {
 	for c := list.firstChild; c != nil; c = c.NextSibling {
 		if c.Type != html.ElementNode {
 			continue
@@ -223,14 +223,14 @@ type ElementList []*html.Node
 
 func (list ElementList) Length() int { return len(list) }
 
-func (list ElementList) Item(index int) dom.Element {
+func (list ElementList) Item(index int) spec.Element {
 	if index < 0 || index >= len(list) {
 		return nil
 	}
 	return &Element{node: list[index]}
 }
 
-func (list ElementList) NamedItem(name string) dom.Element {
+func (list ElementList) NamedItem(name string) spec.Element {
 	for _, el := range list {
 		if isNamed(el, name) {
 			return &Element{node: el}
