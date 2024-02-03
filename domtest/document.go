@@ -22,7 +22,6 @@ type T interface {
 
 func Response(t T, res *http.Response) spec.Document {
 	t.Helper()
-
 	buf, err := io.ReadAll(res.Body)
 	if err != nil {
 		t.Error(err)
