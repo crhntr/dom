@@ -20,7 +20,7 @@ type T interface {
 	Log(...any)
 }
 
-func ResponseDocument(t T, res *http.Response) spec.Document {
+func Response(t T, res *http.Response) spec.Document {
 	t.Helper()
 
 	buf, err := io.ReadAll(res.Body)

@@ -24,13 +24,13 @@ var (
 	fragmentHTML string
 )
 
-func TestResponseDocument(t *testing.T) {
+func TestResponse(t *testing.T) {
 	t.Run("when a valid html document is passed", func(t *testing.T) {
 		testingT := new(fakes.T)
 		res := &http.Response{
 			Body: io.NopCloser(strings.NewReader(indexHTML)),
 		}
-		document := domtest.ResponseDocument(testingT, res)
+		document := domtest.Response(testingT, res)
 
 		assert.Equal(t, testingT.ErrorCallCount(), 0, "it should not report errors")
 		assert.Equal(t, testingT.LogCallCount(), 0)
@@ -46,7 +46,7 @@ func TestResponseDocument(t *testing.T) {
 		res := &http.Response{
 			Body: io.NopCloser(strings.NewReader(fragmentHTML)),
 		}
-		document := domtest.ResponseDocument(testingT, res)
+		document := domtest.Response(testingT, res)
 
 		assert.Equal(t, testingT.ErrorCallCount(), 0, "it should not report errors")
 		assert.Equal(t, testingT.LogCallCount(), 0)
@@ -68,7 +68,7 @@ func TestResponseDocument(t *testing.T) {
 		res := &http.Response{
 			Body: fakeBody,
 		}
-		document := domtest.ResponseDocument(testingT, res)
+		document := domtest.Response(testingT, res)
 
 		assert.Equal(t, testingT.ErrorCallCount(), 1, "it should report an error")
 		assert.Equal(t, testingT.LogCallCount(), 0)
@@ -87,7 +87,7 @@ func TestResponseDocument(t *testing.T) {
 		res := &http.Response{
 			Body: fakeBody,
 		}
-		document := domtest.ResponseDocument(testingT, res)
+		document := domtest.Response(testingT, res)
 
 		assert.Equal(t, testingT.ErrorCallCount(), 1, "it should report two errors")
 		assert.Equal(t, testingT.LogCallCount(), 0)
@@ -106,7 +106,7 @@ func TestResponseDocument(t *testing.T) {
 		res := &http.Response{
 			Body: fakeBody,
 		}
-		document := domtest.ResponseDocument(testingT, res)
+		document := domtest.Response(testingT, res)
 
 		assert.Equal(t, testingT.ErrorCallCount(), 2, "it should report two errors")
 		assert.Equal(t, testingT.LogCallCount(), 0)
@@ -125,7 +125,7 @@ func TestResponseDocument(t *testing.T) {
 		res := &http.Response{
 			Body: fakeBody,
 		}
-		document := domtest.ResponseDocument(testingT, res)
+		document := domtest.Response(testingT, res)
 
 		assert.Equal(t, testingT.ErrorCallCount(), 2, "it should report two errors")
 		assert.Equal(t, testingT.LogCallCount(), 0)
