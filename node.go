@@ -274,7 +274,7 @@ func removeChild(parent *html.Node, node spec.ChildNode) spec.ChildNode {
 }
 
 func children(parent *html.Node) spec.ElementCollection {
-	return SiblingElements{firstChild: parent.FirstChild}
+	return siblingElements{firstChild: parent.FirstChild}
 }
 
 func firstElementChild(node *html.Node) spec.Element {
@@ -360,7 +360,7 @@ func clearChildren(node *html.Node) {
 
 func getElementsByTagName(node *html.Node, name string) spec.ElementCollection {
 	name = strings.ToUpper(name)
-	var list ElementList
+	var list elementList
 	walkNodes(node, func(n *html.Node) bool {
 		if strings.ToUpper(n.Data) == name {
 			list = append(list, n)
@@ -371,7 +371,7 @@ func getElementsByTagName(node *html.Node, name string) spec.ElementCollection {
 }
 
 func getElementsByClassName(node *html.Node, name string) spec.ElementCollection {
-	var list ElementList
+	var list elementList
 	walkNodes(node, func(n *html.Node) bool {
 		if hasClasses(getAttribute(n, "class"), name) {
 			list = append(list, n)

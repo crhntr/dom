@@ -178,11 +178,11 @@ func (e *Element) OuterHTML() string {
 	return buf.String()
 }
 
-type SiblingElements struct {
+type siblingElements struct {
 	firstChild *html.Node
 }
 
-func (list SiblingElements) Length() int {
+func (list siblingElements) Length() int {
 	result := 0
 	for c := list.firstChild; c != nil; c = c.NextSibling {
 		if c.Type != html.ElementNode {
@@ -193,7 +193,7 @@ func (list SiblingElements) Length() int {
 	return result
 }
 
-func (list SiblingElements) Item(index int) spec.Element {
+func (list siblingElements) Item(index int) spec.Element {
 	childIndex := 0
 	for c := list.firstChild; c != nil; c = c.NextSibling {
 		if c.Type != html.ElementNode {
@@ -207,7 +207,7 @@ func (list SiblingElements) Item(index int) spec.Element {
 	return nil
 }
 
-func (list SiblingElements) NamedItem(name string) spec.Element {
+func (list siblingElements) NamedItem(name string) spec.Element {
 	for c := list.firstChild; c != nil; c = c.NextSibling {
 		if c.Type != html.ElementNode {
 			continue
@@ -219,18 +219,18 @@ func (list SiblingElements) NamedItem(name string) spec.Element {
 	return nil
 }
 
-type ElementList []*html.Node
+type elementList []*html.Node
 
-func (list ElementList) Length() int { return len(list) }
+func (list elementList) Length() int { return len(list) }
 
-func (list ElementList) Item(index int) spec.Element {
+func (list elementList) Item(index int) spec.Element {
 	if index < 0 || index >= len(list) {
 		return nil
 	}
 	return &Element{node: list[index]}
 }
 
-func (list ElementList) NamedItem(name string) spec.Element {
+func (list elementList) NamedItem(name string) spec.Element {
 	for _, el := range list {
 		if isNamed(el, name) {
 			return &Element{node: el}
