@@ -13,7 +13,6 @@ import (
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
 //counterfeiter:generate --fake-name T -o ../internal/fakes/t.go . T
-//counterfeiter:generate --fake-name Handler -o ../internal/fakes/handler.go net/http.Handler
 
 type T interface {
 	Helper()
