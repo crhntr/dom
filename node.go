@@ -96,9 +96,9 @@ func walkNodes(start *html.Node, fn func(node *html.Node) (done bool)) bool {
 	return false
 }
 
-type SiblingNodeList html.Node
+type firstChildIterator html.Node
 
-func (node *SiblingNodeList) Length() int {
+func (node *firstChildIterator) Length() int {
 	c := (*html.Node)(node)
 	result := 0
 	for c != nil {
@@ -108,7 +108,7 @@ func (node *SiblingNodeList) Length() int {
 	return result
 }
 
-func (node *SiblingNodeList) Item(index int) spec.Node {
+func (node *firstChildIterator) Item(index int) spec.Node {
 	c := (*html.Node)(node)
 	offset := 0
 	for c != nil {
@@ -142,14 +142,16 @@ func ownerDocument(node *html.Node) spec.Document {
 	}
 	return nil
 }
-func parentNode(node *html.Node) spec.Node                { return NewNode(node.Parent) }
-func parentElement(node *html.Node) spec.Element          { return htmlNodeToDomElement(node.Parent) }
-func hasChildNodes(node *html.Node) bool                  { return node.FirstChild != nil }
-func childNodes(node *html.Node) spec.NodeList[spec.Node] { return (*SiblingNodeList)(node.FirstChild) }
-func firstChild(node *html.Node) spec.ChildNode           { return htmlNodeToDomChildNode(node.FirstChild) }
-func lastChild(node *html.Node) spec.ChildNode            { return htmlNodeToDomChildNode(node.LastChild) }
-func previousSibling(node *html.Node) spec.ChildNode      { return htmlNodeToDomChildNode(node.PrevSibling) }
-func nextSibling(node *html.Node) spec.ChildNode          { return htmlNodeToDomChildNode(node.NextSibling) }
+func parentNode(node *html.Node) spec.Node       { return NewNode(node.Parent) }
+func parentElement(node *html.Node) spec.Element { return htmlNodeToDomElement(node.Parent) }
+func hasChildNodes(node *html.Node) bool         { return node.FirstChild != nil }
+func childNodes(node *html.Node) spec.NodeList[spec.Node] {
+	return (*firstChildIterator)(node.FirstChild)
+}
+func firstChild(node *html.Node) spec.ChildNode      { return htmlNodeToDomChildNode(node.FirstChild) }
+func lastChild(node *html.Node) spec.ChildNode       { return htmlNodeToDomChildNode(node.LastChild) }
+func previousSibling(node *html.Node) spec.ChildNode { return htmlNodeToDomChildNode(node.PrevSibling) }
+func nextSibling(node *html.Node) spec.ChildNode     { return htmlNodeToDomChildNode(node.NextSibling) }
 
 func textContent(node *html.Node) string {
 	var buf bytes.Buffer
@@ -404,16 +406,16 @@ func querySelector(node *html.Node, query string) spec.Element {
 }
 
 func querySelectorAll(node *html.Node, query string) spec.NodeList[spec.Element] {
-	return NodeListHTMLElements(cascadia.QueryAll(node, cascadia.MustCompile(query)))
+	return nodeListHTMLElements(cascadia.QueryAll(node, cascadia.MustCompile(query)))
 }
 
-var _ spec.NodeList[spec.Element] = NodeListHTMLElements(nil)
+var _ spec.NodeList[spec.Element] = nodeListHTMLElements(nil)
 
-type NodeListHTMLElements []*html.Node
+type nodeListHTMLElements []*html.Node
 
-func (n NodeListHTMLElements) Length() int { return len(n) }
+func (n nodeListHTMLElements) Length() int { return len(n) }
 
-func (n NodeListHTMLElements) Item(i int) spec.Element {
+func (n nodeListHTMLElements) Item(i int) spec.Element {
 	return &Element{
 		node: n[i],
 	}
