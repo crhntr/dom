@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"net/http"
+	"strings"
 
 	"golang.org/x/net/html"
 
@@ -35,6 +36,11 @@ func Response(t T, res *http.Response) spec.Document {
 		return nil
 	}
 	return Reader(t, bytes.NewReader(buf))
+}
+
+func String(t T, s string) spec.Document {
+	t.Helper()
+	return Reader(t, strings.NewReader(s))
 }
 
 func Reader(t T, r io.Reader) spec.Document {
