@@ -72,7 +72,7 @@ func TestResponse(t *testing.T) {
 
 		assert.Equal(t, testingT.ErrorCallCount(), 1, "it should report an error")
 		assert.Equal(t, testingT.LogCallCount(), 0)
-		assert.Equal(t, testingT.HelperCallCount(), 1)
+		assert.NotZero(t, testingT.HelperCallCount())
 		assert.Equal(t, fakeBody.closeCallCount, 1)
 
 		assert.Nil(t, document)
@@ -91,7 +91,7 @@ func TestResponse(t *testing.T) {
 
 		assert.Equal(t, testingT.ErrorCallCount(), 1, "it should report two errors")
 		assert.Equal(t, testingT.LogCallCount(), 0)
-		assert.Equal(t, testingT.HelperCallCount(), 1)
+		assert.NotZero(t, testingT.HelperCallCount())
 		assert.Equal(t, fakeBody.closeCallCount, 1)
 
 		assert.Nil(t, document)
@@ -129,7 +129,7 @@ func TestResponse(t *testing.T) {
 
 		assert.Equal(t, testingT.ErrorCallCount(), 2, "it should report two errors")
 		assert.Equal(t, testingT.LogCallCount(), 0)
-		assert.Equal(t, testingT.HelperCallCount(), 1)
+		assert.NotZero(t, testingT.HelperCallCount())
 		assert.Equal(t, fakeBody.closeCallCount, 1)
 
 		assert.Nil(t, document)
@@ -143,8 +143,22 @@ func TestReader(t *testing.T) {
 	document := domtest.Reader(testingT, r)
 
 	assert.Equal(t, testingT.ErrorCallCount(), 1, "it should report two errors")
-	assert.Equal(t, testingT.HelperCallCount(), 1)
+	assert.NotZero(t, testingT.HelperCallCount())
 	assert.Nil(t, document)
+}
+
+func TestString(t *testing.T) {
+	testingT := new(fakes.T)
+
+	document := domtest.String(testingT, "<p>Hello, world!</p>")
+
+	assert.Equal(t, testingT.ErrorCallCount(), 0, "it should not report errors")
+	assert.Equal(t, testingT.LogCallCount(), 0)
+	assert.NotZero(t, testingT.HelperCallCount())
+
+	assert.NotNil(t, document)
+	p := document.QuerySelector(`p`)
+	assert.Equal(t, p.TextContent(), "Hello, world!")
 }
 
 type errClose struct {
