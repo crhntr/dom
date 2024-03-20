@@ -313,33 +313,48 @@ func childElementCount(node *html.Node) int {
 	return result
 }
 
-func prependNodes(node *html.Node, nodes []spec.ChildNode) {
+func prependNodes(node *html.Node, nodes []spec.Node) {
 	for i := range nodes {
 		dn := nodes[len(nodes)-1-i]
+		if fragment, ok := dn.(*DocumentFragment); ok {
+			for _, n := range fragment.nodes {
+				prependHTMLNode(node, n)
+			}
+			continue
+		}
 		n := domNodeToHTMLNode(dn)
-
-		fc := node.FirstChild
-		if fc != nil {
-			fc.PrevSibling = n
-			n.NextSibling = fc
-		}
-		n.Parent = node
-		node.FirstChild = n
-
-		if node.LastChild == nil {
-			node.LastChild = n
-		}
+		prependHTMLNode(node, n)
 	}
 }
 
-func appendNodes(parent *html.Node, nodes []spec.ChildNode) {
+func prependHTMLNode(node *html.Node, n *html.Node) {
+	fc := node.FirstChild
+	if fc != nil {
+		fc.PrevSibling = n
+		n.NextSibling = fc
+	}
+	n.Parent = node
+	node.FirstChild = n
+
+	if node.LastChild == nil {
+		node.LastChild = n
+	}
+}
+
+func appendNodes(parent *html.Node, nodes ...spec.Node) {
 	for _, node := range nodes {
+		if fragment, ok := node.(*DocumentFragment); ok {
+			for _, n := range fragment.nodes {
+				parent.AppendChild(n)
+			}
+			continue
+		}
 		n := domNodeToHTMLNode(node)
 		parent.AppendChild(n)
 	}
 }
 
-func replaceChildren(parent *html.Node, nodes []spec.ChildNode) {
+func replaceChildren(parent *html.Node, nodes []spec.Node) {
 	clearChildren(parent)
 	for _, node := range nodes {
 		n := domNodeToHTMLNode(node)
@@ -358,7 +373,7 @@ func clearChildren(node *html.Node) {
 	node.LastChild = nil
 }
 
-func getElementsByTagName(node *html.Node, name string) spec.ElementCollection {
+func getElementsByTagName(node *html.Node, name string) elementList {
 	name = strings.ToUpper(name)
 	var list elementList
 	walkNodes(node, func(n *html.Node) bool {
@@ -370,7 +385,7 @@ func getElementsByTagName(node *html.Node, name string) spec.ElementCollection {
 	return list
 }
 
-func getElementsByClassName(node *html.Node, name string) spec.ElementCollection {
+func getElementsByClassName(node *html.Node, name string) elementList {
 	var list elementList
 	walkNodes(node, func(n *html.Node) bool {
 		if hasClasses(getAttribute(n, "class"), name) {
@@ -405,8 +420,8 @@ func querySelector(node *html.Node, query string) spec.Element {
 	return &Element{node: result}
 }
 
-func querySelectorAll(node *html.Node, query string) spec.NodeList[spec.Element] {
-	return nodeListHTMLElements(cascadia.QueryAll(node, cascadia.MustCompile(query)))
+func querySelectorAll(node *html.Node, query string) nodeListHTMLElements {
+	return cascadia.QueryAll(node, cascadia.MustCompile(query))
 }
 
 var _ spec.NodeList[spec.Element] = nodeListHTMLElements(nil)
