@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"golang.org/x/net/html"
+	"golang.org/x/net/html/atom"
 
 	"github.com/crhntr/dom"
 	"github.com/crhntr/dom/spec"
@@ -51,4 +52,22 @@ func Reader(t T, r io.Reader) spec.Document {
 		return nil
 	}
 	return dom.NewNode(node).(spec.Document)
+}
+
+func DocumentFragment(t T, r io.Reader, parent atom.Atom) []spec.Element {
+	t.Helper()
+	nodes, err := html.ParseFragment(r, &html.Node{
+		Type:     html.ElementNode,
+		Data:     parent.String(),
+		DataAtom: parent,
+	})
+	if err != nil {
+		t.Error(err)
+		return nil
+	}
+	var result []spec.Element
+	for _, node := range nodes {
+		result = append(result, dom.NewNode(node).(spec.Element))
+	}
+	return result
 }

@@ -37,13 +37,13 @@ func (e *Element) Length() int {
 
 // ParentNode
 
-func (e *Element) Children() spec.ElementCollection        { return children(e.node) }
-func (e *Element) FirstElementChild() spec.Element         { return firstElementChild(e.node) }
-func (e *Element) LastElementChild() spec.Element          { return lastElementChild(e.node) }
-func (e *Element) ChildElementCount() int                  { return childElementCount(e.node) }
-func (e *Element) Prepend(nodes ...spec.ChildNode)         { prependNodes(e.node, nodes) }
-func (e *Element) Append(nodes ...spec.ChildNode)          { appendNodes(e.node, nodes) }
-func (e *Element) ReplaceChildren(nodes ...spec.ChildNode) { replaceChildren(e.node, nodes) }
+func (e *Element) Children() spec.ElementCollection   { return children(e.node) }
+func (e *Element) FirstElementChild() spec.Element    { return firstElementChild(e.node) }
+func (e *Element) LastElementChild() spec.Element     { return lastElementChild(e.node) }
+func (e *Element) ChildElementCount() int             { return childElementCount(e.node) }
+func (e *Element) Prepend(nodes ...spec.Node)         { prependNodes(e.node, nodes) }
+func (e *Element) Append(nodes ...spec.Node)          { appendNodes(e.node, nodes...) }
+func (e *Element) ReplaceChildren(nodes ...spec.Node) { replaceChildren(e.node, nodes) }
 func (e *Element) GetElementsByTagName(name string) spec.ElementCollection {
 	return getElementsByTagName(e.node, name)
 }

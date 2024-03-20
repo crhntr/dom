@@ -162,9 +162,9 @@ type ParentNode interface {
 	LastElementChild() Element
 	ChildElementCount() int
 
-	Prepend(nodes ...ChildNode)
-	Append(nodes ...ChildNode)
-	ReplaceChildren(nodes ...ChildNode)
+	Prepend(nodes ...Node)
+	Append(nodes ...Node)
+	ReplaceChildren(nodes ...Node)
 
 	ElementQueries
 
@@ -235,7 +235,19 @@ type ElementCollection interface {
 }
 
 type DocumentFragment interface {
-	ParentNode
+	Node
+
+	Children() ElementCollection
+	FirstElementChild() Element
+	LastElementChild() Element
+	ChildElementCount() int
+
+	Append(nodes ...Node)
+	Prepend(nodes ...Node)
+	ReplaceChildren(nodes ...Node)
+
+	QuerySelector(query string) Element
+	QuerySelectorAll(query string) NodeList[Element]
 }
 
 type Comment interface {
