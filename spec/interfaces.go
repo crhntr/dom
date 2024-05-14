@@ -93,7 +93,7 @@ const (
 func (nt NodeType) String() string {
 	switch nt {
 	case NodeTypeElement:
-		return "Element"
+		return "element"
 	case NodeTypeAttribute:
 		return "Attribute"
 	case NodeTypeText:

@@ -13,6 +13,26 @@ type T struct {
 	errorArgsForCall []struct {
 		arg1 []any
 	}
+	ErrorfStub        func(string, ...interface{})
+	errorfMutex       sync.RWMutex
+	errorfArgsForCall []struct {
+		arg1 string
+		arg2 []interface{}
+	}
+	FailNowStub        func()
+	failNowMutex       sync.RWMutex
+	failNowArgsForCall []struct {
+	}
+	FailedStub        func() bool
+	failedMutex       sync.RWMutex
+	failedArgsForCall []struct {
+	}
+	failedReturns struct {
+		result1 bool
+	}
+	failedReturnsOnCall map[int]struct {
+		result1 bool
+	}
 	HelperStub        func()
 	helperMutex       sync.RWMutex
 	helperArgsForCall []struct {
@@ -21,6 +41,10 @@ type T struct {
 	logMutex       sync.RWMutex
 	logArgsForCall []struct {
 		arg1 []any
+	}
+	SkipNowStub        func()
+	skipNowMutex       sync.RWMutex
+	skipNowArgsForCall []struct {
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
@@ -56,6 +80,116 @@ func (fake *T) ErrorArgsForCall(i int) []any {
 	defer fake.errorMutex.RUnlock()
 	argsForCall := fake.errorArgsForCall[i]
 	return argsForCall.arg1
+}
+
+func (fake *T) Errorf(arg1 string, arg2 ...interface{}) {
+	fake.errorfMutex.Lock()
+	fake.errorfArgsForCall = append(fake.errorfArgsForCall, struct {
+		arg1 string
+		arg2 []interface{}
+	}{arg1, arg2})
+	stub := fake.ErrorfStub
+	fake.recordInvocation("Errorf", []interface{}{arg1, arg2})
+	fake.errorfMutex.Unlock()
+	if stub != nil {
+		fake.ErrorfStub(arg1, arg2...)
+	}
+}
+
+func (fake *T) ErrorfCallCount() int {
+	fake.errorfMutex.RLock()
+	defer fake.errorfMutex.RUnlock()
+	return len(fake.errorfArgsForCall)
+}
+
+func (fake *T) ErrorfCalls(stub func(string, ...interface{})) {
+	fake.errorfMutex.Lock()
+	defer fake.errorfMutex.Unlock()
+	fake.ErrorfStub = stub
+}
+
+func (fake *T) ErrorfArgsForCall(i int) (string, []interface{}) {
+	fake.errorfMutex.RLock()
+	defer fake.errorfMutex.RUnlock()
+	argsForCall := fake.errorfArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *T) FailNow() {
+	fake.failNowMutex.Lock()
+	fake.failNowArgsForCall = append(fake.failNowArgsForCall, struct {
+	}{})
+	stub := fake.FailNowStub
+	fake.recordInvocation("FailNow", []interface{}{})
+	fake.failNowMutex.Unlock()
+	if stub != nil {
+		fake.FailNowStub()
+	}
+}
+
+func (fake *T) FailNowCallCount() int {
+	fake.failNowMutex.RLock()
+	defer fake.failNowMutex.RUnlock()
+	return len(fake.failNowArgsForCall)
+}
+
+func (fake *T) FailNowCalls(stub func()) {
+	fake.failNowMutex.Lock()
+	defer fake.failNowMutex.Unlock()
+	fake.FailNowStub = stub
+}
+
+func (fake *T) Failed() bool {
+	fake.failedMutex.Lock()
+	ret, specificReturn := fake.failedReturnsOnCall[len(fake.failedArgsForCall)]
+	fake.failedArgsForCall = append(fake.failedArgsForCall, struct {
+	}{})
+	stub := fake.FailedStub
+	fakeReturns := fake.failedReturns
+	fake.recordInvocation("Failed", []interface{}{})
+	fake.failedMutex.Unlock()
+	if stub != nil {
+		return stub()
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *T) FailedCallCount() int {
+	fake.failedMutex.RLock()
+	defer fake.failedMutex.RUnlock()
+	return len(fake.failedArgsForCall)
+}
+
+func (fake *T) FailedCalls(stub func() bool) {
+	fake.failedMutex.Lock()
+	defer fake.failedMutex.Unlock()
+	fake.FailedStub = stub
+}
+
+func (fake *T) FailedReturns(result1 bool) {
+	fake.failedMutex.Lock()
+	defer fake.failedMutex.Unlock()
+	fake.FailedStub = nil
+	fake.failedReturns = struct {
+		result1 bool
+	}{result1}
+}
+
+func (fake *T) FailedReturnsOnCall(i int, result1 bool) {
+	fake.failedMutex.Lock()
+	defer fake.failedMutex.Unlock()
+	fake.FailedStub = nil
+	if fake.failedReturnsOnCall == nil {
+		fake.failedReturnsOnCall = make(map[int]struct {
+			result1 bool
+		})
+	}
+	fake.failedReturnsOnCall[i] = struct {
+		result1 bool
+	}{result1}
 }
 
 func (fake *T) Helper() {
@@ -114,15 +248,47 @@ func (fake *T) LogArgsForCall(i int) []any {
 	return argsForCall.arg1
 }
 
+func (fake *T) SkipNow() {
+	fake.skipNowMutex.Lock()
+	fake.skipNowArgsForCall = append(fake.skipNowArgsForCall, struct {
+	}{})
+	stub := fake.SkipNowStub
+	fake.recordInvocation("SkipNow", []interface{}{})
+	fake.skipNowMutex.Unlock()
+	if stub != nil {
+		fake.SkipNowStub()
+	}
+}
+
+func (fake *T) SkipNowCallCount() int {
+	fake.skipNowMutex.RLock()
+	defer fake.skipNowMutex.RUnlock()
+	return len(fake.skipNowArgsForCall)
+}
+
+func (fake *T) SkipNowCalls(stub func()) {
+	fake.skipNowMutex.Lock()
+	defer fake.skipNowMutex.Unlock()
+	fake.SkipNowStub = stub
+}
+
 func (fake *T) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
 	fake.errorMutex.RLock()
 	defer fake.errorMutex.RUnlock()
+	fake.errorfMutex.RLock()
+	defer fake.errorfMutex.RUnlock()
+	fake.failNowMutex.RLock()
+	defer fake.failNowMutex.RUnlock()
+	fake.failedMutex.RLock()
+	defer fake.failedMutex.RUnlock()
 	fake.helperMutex.RLock()
 	defer fake.helperMutex.RUnlock()
 	fake.logMutex.RLock()
 	defer fake.logMutex.RUnlock()
+	fake.skipNowMutex.RLock()
+	defer fake.skipNowMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

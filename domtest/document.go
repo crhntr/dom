@@ -20,6 +20,10 @@ type T interface {
 	Helper()
 	Error(...any)
 	Log(...any)
+	Errorf(format string, args ...interface{})
+	FailNow()
+	Failed() bool
+	SkipNow()
 }
 
 func Response(t T, res *http.Response) spec.Document {
