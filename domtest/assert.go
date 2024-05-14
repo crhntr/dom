@@ -11,7 +11,7 @@ type ElementAssertion struct {
 	element spec.Element
 }
 
-func QuerySelect(t T, parent spec.ElementQueries, query string) ElementAssertion {
+func QuerySelector(t T, parent spec.ElementQueries, query string) ElementAssertion {
 	t.Helper()
 	element := parent.QuerySelector(query)
 	require.NotNil(t, element)
@@ -54,7 +54,7 @@ type ElementNodeListAssertions struct {
 	list spec.NodeList[spec.Element]
 }
 
-func QuerySelectAll(t T, parent spec.ElementQueries, query string) ElementNodeListAssertions {
+func QuerySelectorAll(t T, parent spec.ElementQueries, query string) ElementNodeListAssertions {
 	t.Helper()
 	list := parent.QuerySelectorAll(query)
 	require.NotZero(t, list.Length())

@@ -40,7 +40,7 @@ func TestQuerySelect(t *testing.T) {
 		tst := new(fakes.T)
 		document := domtest.String(t, documentText)
 
-		domtest.QuerySelect(tst, document, `head title`).
+		domtest.QuerySelector(tst, document, `head title`).
 			TextContentEquals(tst, "Test Data")
 
 		assert.Zero(t, tst.FailNowCallCount())
@@ -50,7 +50,7 @@ func TestQuerySelect(t *testing.T) {
 		tst := new(fakes.T)
 		document := domtest.String(t, documentText)
 
-		domtest.QuerySelect(tst, document, `body p`).
+		domtest.QuerySelector(tst, document, `body p`).
 			TextContentEquals(tst, "Hello, world!").
 			HasAttributeValue(tst, "id", "greeting")
 
@@ -61,7 +61,7 @@ func TestQuerySelect(t *testing.T) {
 		tst := new(fakes.T)
 		document := domtest.String(t, documentText)
 
-		domtest.QuerySelectAll(tst, document, `body ul li`).
+		domtest.QuerySelectorAll(tst, document, `body ul li`).
 			LengthEquals(tst, 3).
 			HasAttribute(tst, "data-index").
 			HasAttributeValue(tst, "data-selected", "false").
@@ -74,7 +74,7 @@ func TestQuerySelect(t *testing.T) {
 		tst := new(fakes.T)
 		document := domtest.String(t, documentText)
 
-		domtest.QuerySelectAll(tst, document, `#texts>div`).
+		domtest.QuerySelectorAll(tst, document, `#texts>div`).
 			LengthEquals(tst, 4).
 			TextContentEquals(tst, "text")
 
@@ -85,7 +85,7 @@ func TestQuerySelect(t *testing.T) {
 		tst := new(fakes.T)
 		document := domtest.String(t, documentText)
 
-		domtest.QuerySelectAll(tst, document, `#texts>div`).
+		domtest.QuerySelectorAll(tst, document, `#texts>div`).
 			LengthEquals(tst, 10000)
 
 		assert.Equal(t, 1, tst.FailNowCallCount())
@@ -95,7 +95,7 @@ func TestQuerySelect(t *testing.T) {
 		tst := new(fakes.T)
 		document := domtest.String(t, documentText)
 
-		domtest.QuerySelectAll(tst, document, `[data-index]`).
+		domtest.QuerySelectorAll(tst, document, `[data-index]`).
 			HasAttributeValues(tst, map[string]string{
 				"data-selected": "false",
 				"class":         "happy-item",
