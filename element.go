@@ -165,14 +165,7 @@ func (e *Element) SetOuterHTML(s string) {
 	e.node.Parent.RemoveChild(e.node)
 }
 
-func (e *Element) OuterHTML() string {
-	var buf bytes.Buffer
-	err := html.Render(&buf, e.node)
-	if err != nil {
-		panic(err)
-	}
-	return buf.String()
-}
+func (e *Element) OuterHTML() string { return outerHTML(e.node) }
 
 type siblingElements struct {
 	firstChild *html.Node

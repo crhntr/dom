@@ -13,6 +13,7 @@ type Document struct {
 	node *html.Node
 }
 
+func (d *Document) String() string                  { return outerHTML(d.node) }
 func (d *Document) NodeType() spec.NodeType         { return nodeType(d.node.Type) }
 func (d *Document) CloneNode(deep bool) spec.Node   { return NewNode(cloneNode(d.node, deep)) }
 func (d *Document) IsSameNode(other spec.Node) bool { return isSameNode(d.node, other) }

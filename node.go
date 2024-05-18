@@ -11,6 +11,15 @@ import (
 	"github.com/crhntr/dom/spec"
 )
 
+func outerHTML(node *html.Node) string {
+	var buf bytes.Buffer
+	err := html.Render(&buf, node)
+	if err != nil {
+		return ""
+	}
+	return buf.String()
+}
+
 func nodeType(nodeType html.NodeType) spec.NodeType {
 	switch nodeType {
 	case html.TextNode:
