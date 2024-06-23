@@ -11,9 +11,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/net/html/atom"
 
 	"github.com/crhntr/dom/domtest"
 	"github.com/crhntr/dom/internal/fakes"
+	"github.com/crhntr/dom/spec"
 )
 
 var (
@@ -133,6 +135,23 @@ func TestResponse(t *testing.T) {
 		assert.Equal(t, fakeBody.closeCallCount, 1)
 
 		assert.Nil(t, document)
+	})
+}
+
+func TestDocumentFragment(t *testing.T) {
+	t.Run("when a valid html document is passed", func(t *testing.T) {
+		testingT := new(fakes.T)
+		res := &http.Response{
+			Body: io.NopCloser(strings.NewReader(fragmentHTML)),
+		}
+		fragment := domtest.DocumentFragmentResponse(testingT, res, atom.Body)
+
+		assert.Equal(t, testingT.ErrorCallCount(), 0, "it should not report errors")
+		assert.Equal(t, testingT.LogCallCount(), 0)
+		assert.NotZero(t, testingT.HelperCallCount())
+
+		require.NotNil(t, fragment)
+		require.Equal(t, spec.NodeTypeDocumentFragment, fragment.NodeType())
 	})
 }
 

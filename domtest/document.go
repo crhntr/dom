@@ -58,9 +58,15 @@ func Reader(t T, r io.Reader) spec.Document {
 	return dom.NewNode(node).(spec.Document)
 }
 
-func DocumentFragment(t T, r io.Reader, parent atom.Atom) []spec.Element {
+func DocumentFragmentReader(t T, r io.Reader, parent atom.Atom) spec.DocumentFragment {
 	t.Helper()
-	nodes, err := html.ParseFragment(r, &html.Node{
+
+	body, err := io.ReadAll(r)
+	if err != nil {
+		t.Error(err)
+		return nil
+	}
+	nodes, err := html.ParseFragment(bytes.NewReader(body), &html.Node{
 		Type:     html.ElementNode,
 		Data:     parent.String(),
 		DataAtom: parent,
@@ -69,9 +75,17 @@ func DocumentFragment(t T, r io.Reader, parent atom.Atom) []spec.Element {
 		t.Error(err)
 		return nil
 	}
-	var result []spec.Element
-	for _, node := range nodes {
-		result = append(result, dom.NewNode(node).(spec.Element))
+	return dom.NewDocumentFragment(nodes)
+}
+
+func DocumentFragmentResponse(t T, res *http.Response, parent atom.Atom) spec.DocumentFragment {
+	t.Helper()
+	defer closeAndCheckError(t, res.Body)
+	return DocumentFragmentReader(t, res.Body, parent)
+}
+
+func closeAndCheckError(t T, c io.Closer) {
+	if err := c.Close(); err != nil {
+		t.Error(err)
 	}
-	return result
 }
