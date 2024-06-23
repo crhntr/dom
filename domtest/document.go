@@ -58,6 +58,27 @@ func Reader(t T, r io.Reader) spec.Document {
 	return dom.NewNode(node).(spec.Document)
 }
 
+// DocumentFragment creates a list of elements from a reader.
+// It does not skip text nodes and will panic if it encounters any.
+// Deprecated: use DocumentFragmentReader instead
+func DocumentFragment(t T, r io.Reader, parent atom.Atom) []spec.Element {
+	t.Helper()
+	nodes, err := html.ParseFragment(r, &html.Node{
+		Type:     html.ElementNode,
+		Data:     parent.String(),
+		DataAtom: parent,
+	})
+	if err != nil {
+		t.Error(err)
+		return nil
+	}
+	var result []spec.Element
+	for _, node := range nodes {
+		result = append(result, dom.NewNode(node).(spec.Element))
+	}
+	return result
+}
+
 func DocumentFragmentReader(t T, r io.Reader, parent atom.Atom) spec.DocumentFragment {
 	t.Helper()
 
