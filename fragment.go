@@ -85,14 +85,14 @@ func (d *DocumentFragment) ChildElementCount() int {
 	return count
 }
 
-func (d *DocumentFragment) Append(nodes ...spec.ChildNode) {
+func (d *DocumentFragment) Append(nodes ...spec.Node) {
 	d.nodes = slices.Grow(d.nodes, len(nodes))
 	for _, node := range nodes {
 		d.nodes = append(d.nodes, domNodeToHTMLNode(node))
 	}
 }
 
-func (d *DocumentFragment) Prepend(nodes ...spec.ChildNode) {
+func (d *DocumentFragment) Prepend(nodes ...spec.Node) {
 	children := make([]*html.Node, 0, len(d.nodes)+len(nodes))
 	for _, node := range nodes {
 		children = append(children, domNodeToHTMLNode(node))
@@ -100,7 +100,7 @@ func (d *DocumentFragment) Prepend(nodes ...spec.ChildNode) {
 	d.nodes = append(children, d.nodes...)
 }
 
-func (d *DocumentFragment) ReplaceChildren(nodes ...spec.ChildNode) {
+func (d *DocumentFragment) ReplaceChildren(nodes ...spec.Node) {
 	list := make([]*html.Node, 0, len(nodes))
 	for _, node := range nodes {
 		list = append(list, domNodeToHTMLNode(node))
@@ -110,7 +110,7 @@ func (d *DocumentFragment) ReplaceChildren(nodes ...spec.ChildNode) {
 
 func (d *DocumentFragment) QuerySelector(query string) spec.Element {
 	for _, n := range d.nodes {
-		el := querySelector(n, query)
+		el := querySelector(n, query, true)
 		if el != nil {
 			return el
 		}
@@ -121,7 +121,7 @@ func (d *DocumentFragment) QuerySelector(query string) spec.Element {
 func (d *DocumentFragment) QuerySelectorAll(query string) spec.NodeList[spec.Element] {
 	var list nodeListHTMLElements
 	for _, n := range d.nodes {
-		list = append(list, querySelectorAll(n, query)...)
+		list = append(list, querySelectorAll(n, query, true)...)
 	}
 	return slices.Clip(list)
 }

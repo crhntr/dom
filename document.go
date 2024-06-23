@@ -26,11 +26,11 @@ func (d *Document) GetElementsByClassName(name string) spec.ElementCollection {
 }
 
 func (d *Document) QuerySelector(query string) spec.Element {
-	return querySelector(d.node, query)
+	return querySelector(d.node, query, false)
 }
 
 func (d *Document) QuerySelectorAll(query string) spec.NodeList[spec.Element] {
-	return querySelectorAll(d.node, query)
+	return querySelectorAll(d.node, query, false)
 }
 func (d *Document) Contains(other spec.Node) bool { return contains(d.node, other) }
 

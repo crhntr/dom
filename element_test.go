@@ -1,12 +1,14 @@
 package dom
 
 import (
+	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/net/html"
+	"golang.org/x/net/html/atom"
 
 	"github.com/crhntr/dom/spec"
 )
@@ -241,5 +243,40 @@ func TestElement_IsSameNode(t *testing.T) {
 		e1 := &Element{node: node}
 		e2 := &Element{node: node}
 		assert.True(t, e1.IsSameNode(e2))
+	})
+}
+
+func TestElement_QuerySelector(t *testing.T) {
+	parseFirstElement := func(t *testing.T, fragment string) *Element {
+		nodes, err := html.ParseFragment(strings.NewReader(strings.TrimSpace(fragment)), &html.Node{
+			Type:     html.ElementNode,
+			Data:     atom.Div.String(),
+			DataAtom: atom.Div,
+		})
+		require.NoError(t, err)
+		node := NewNode(nodes[0])
+		require.NotNil(t, node)
+		el, ok := node.(*Element)
+		require.True(t, ok)
+		return el
+	}
+	t.Run("tree of nested results", func(t *testing.T) {
+		element := parseFirstElement(t,
+			/* language=html */ `<div id="n0">
+	<div id="n1">
+		<div id="n2"></div>
+	</div>
+	<div id="n3"></div>
+</div>`)
+		results := element.QuerySelectorAll("div")
+		require.NotNil(t, results)
+		assert.Equal(t, results.Length(), 3)
+
+		for i := 0; i < results.Length(); i++ {
+			result := results.Item(i)
+			require.NotNil(t, result)
+			assert.Equal(t, "DIV", result.TagName())
+			assert.Equal(t, "n"+strconv.Itoa(i+1), result.ID())
+		}
 	})
 }

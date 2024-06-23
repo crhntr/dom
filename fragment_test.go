@@ -1,6 +1,7 @@
 package dom_test
 
 import (
+	"strconv"
 	"strings"
 	"testing"
 
@@ -312,6 +313,37 @@ func TestDocumentFragment_QuerySelector(t *testing.T) {
 	t.Run("not found", func(t *testing.T) {
 		fragment := parseDocumentFragment(t, `<section><div id="a"></div></section><section></section>`)
 		require.Nil(t, fragment.QuerySelector("#not-found"))
+	})
+	t.Run("direct descendant", func(t *testing.T) {
+		fragment := parseDocumentFragment(t, `<p>Peach</p>`)
+		result := fragment.QuerySelector("p")
+		require.NotNil(t, result)
+		assert.Equal(t, "Peach", result.TextContent())
+	})
+	t.Run("tree of nested results", func(t *testing.T) {
+		fragment := parseDocumentFragment(t,
+			/* language=html */ `<div id="n0">
+	<div id="n1">
+		<div id="n2"></div>
+	</div>
+	<div id="n3"></div>
+</div>
+<div id="n4">
+	<div id="n5">
+		<div id="n6"></div>
+	</div>
+	<div id="n7"></div>
+</div>`)
+		results := fragment.QuerySelectorAll("div")
+		require.NotNil(t, results)
+		assert.Equal(t, results.Length(), 8)
+
+		for i := 0; i < results.Length(); i++ {
+			result := results.Item(i)
+			require.NotNil(t, result)
+			assert.Equal(t, "DIV", result.TagName())
+			assert.Equal(t, "n"+strconv.Itoa(i), result.ID())
+		}
 	})
 }
 

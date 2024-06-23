@@ -52,9 +52,11 @@ func (e *Element) GetElementsByClassName(name string) spec.ElementCollection {
 	return getElementsByClassName(e.node, name)
 }
 
-func (e *Element) QuerySelector(query string) spec.Element { return querySelector(e.node, query) }
+func (e *Element) QuerySelector(query string) spec.Element {
+	return querySelector(e.node, query, false)
+}
 func (e *Element) QuerySelectorAll(query string) spec.NodeList[spec.Element] {
-	return querySelectorAll(e.node, query)
+	return querySelectorAll(e.node, query, false)
 }
 func (e *Element) Closest(selector string) spec.Element { return closest(e.node, selector) }
 func (e *Element) Matches(selector string) bool         { return matches(e.node, selector) }

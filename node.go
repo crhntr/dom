@@ -3,6 +3,7 @@ package dom
 import (
 	"bytes"
 	"io"
+	"slices"
 	"strings"
 
 	"github.com/andybalholm/cascadia"
@@ -421,16 +422,24 @@ func hasClasses(elementClassesStr, classesStr string) bool {
 	return len(set) == 0
 }
 
-func querySelector(node *html.Node, query string) spec.Element {
-	result := cascadia.Query(node, cascadia.MustCompile(query))
-	if result == nil {
-		return nil
+func querySelector(node *html.Node, query string, includeParent bool) spec.Element {
+	q := cascadia.MustCompile(query)
+	if includeParent && q.Match(node) {
+		return &Element{node: node}
 	}
-	return &Element{node: result}
+	if result := cascadia.Query(node, q); result != nil {
+		return &Element{node: result}
+	}
+	return nil
 }
 
-func querySelectorAll(node *html.Node, query string) nodeListHTMLElements {
-	return cascadia.QueryAll(node, cascadia.MustCompile(query))
+func querySelectorAll(node *html.Node, query string, includeParent bool) nodeListHTMLElements {
+	q := cascadia.MustCompile(query)
+	results := cascadia.QueryAll(node, cascadia.MustCompile(query))
+	if includeParent && node.Type == html.ElementNode && q.Match(node) {
+		results = slices.Insert(results, 0, node)
+	}
+	return results
 }
 
 var _ spec.NodeList[spec.Element] = nodeListHTMLElements(nil)
