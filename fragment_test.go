@@ -367,3 +367,16 @@ func TestDocumentFragment_QuerySelectorAll(t *testing.T) {
 		require.Nil(t, fragment.QuerySelectorAll("#not-found"))
 	})
 }
+
+func TestDocumentFragment_String(t *testing.T) {
+	t.Run("found two", func(t *testing.T) {
+		rawHTML := `
+<section><div class="a" id="i1"></div></section>
+<section></section>
+<section><div class="a" id="i2"></div><div class="a" id="i3"></div></section>`
+
+		fragment := parseDocumentFragment(t, rawHTML)
+
+		assert.Equal(t, rawHTML, fragment.String())
+	})
+}

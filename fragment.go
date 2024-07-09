@@ -17,6 +17,8 @@ func NewDocumentFragment(nodes []*html.Node) *DocumentFragment {
 	return &DocumentFragment{nodes: nodes}
 }
 
+func (d *DocumentFragment) String() string { return outerHTML(d.nodes...) }
+
 func (d *DocumentFragment) NodeType() spec.NodeType { return spec.NodeTypeDocumentFragment }
 
 func (d *DocumentFragment) CloneNode(deep bool) spec.Node {

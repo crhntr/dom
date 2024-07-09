@@ -12,11 +12,12 @@ import (
 	"github.com/crhntr/dom/spec"
 )
 
-func outerHTML(node *html.Node) string {
+func outerHTML(nodes ...*html.Node) string {
 	var buf bytes.Buffer
-	err := html.Render(&buf, node)
-	if err != nil {
-		return ""
+	for _, node := range nodes {
+		if err := html.Render(&buf, node); err != nil {
+			return ""
+		}
 	}
 	return buf.String()
 }

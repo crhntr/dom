@@ -1,6 +1,8 @@
 module github.com/crhntr/dom
 
-go 1.21
+go 1.22
+
+toolchain go1.22.4
 
 require (
 	github.com/andybalholm/cascadia v1.3.2
@@ -10,6 +12,7 @@ require (
 )
 
 require (
+	github.com/crhntr/hx v0.0.1-dev.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
