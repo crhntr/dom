@@ -8,7 +8,7 @@ import (
 	"github.com/crhntr/dom/spec"
 )
 
-func DocumentResponseErrorMessage(t T, res *http.Response, httpStatusCode int, errMessageElementSelector string) (spec.Element, bool) {
+func DocumentResponseErrorMessage(t T, res *http.Response, httpStatusCode int, errMessageElementSelector string) spec.Element {
 	t.Helper()
 	if res.StatusCode != httpStatusCode {
 		t.Errorf("unexpected status code: %d", res.StatusCode)
@@ -16,19 +16,18 @@ func DocumentResponseErrorMessage(t T, res *http.Response, httpStatusCode int, e
 
 	document := Response(t, res)
 	if document == nil {
-		return nil, false
+		return nil
 	}
 
 	errEl := document.QuerySelector(errMessageElementSelector)
 	if errEl == nil {
 		t.Errorf("error message element not found for query: %s", errMessageElementSelector)
-		return nil, false
+		return nil
 	}
-
-	return errEl, true
+	return errEl
 }
 
-func DocumentFragmentResponseErrorMessage(t T, res *http.Response, httpStatusCode int, errMessageElementSelector string, parent atom.Atom) (spec.Element, bool) {
+func DocumentFragmentResponseErrorMessage(t T, res *http.Response, httpStatusCode int, errMessageElementSelector string, parent atom.Atom) spec.Element {
 	t.Helper()
 	if res.StatusCode != httpStatusCode {
 		t.Errorf("unexpected status code: %d", res.StatusCode)
@@ -36,14 +35,13 @@ func DocumentFragmentResponseErrorMessage(t T, res *http.Response, httpStatusCod
 
 	document := DocumentFragmentResponse(t, res, parent)
 	if document == nil {
-		return nil, false
+		return nil
 	}
 
 	errEl := document.QuerySelector(errMessageElementSelector)
 	if errEl == nil {
 		t.Errorf("error message element not found for query: %s", errMessageElementSelector)
-		return nil, false
+		return nil
 	}
-
-	return errEl, true
+	return errEl
 }

@@ -23,17 +23,16 @@ func TestDocumentResponseErrorMessage(t *testing.T) {
 		ExpCode int
 		Body    string
 		Query   string
-		Assert  func(t *testing.T, fakeT *fakes.T, el spec.Element, ok bool)
+		Assert  func(t *testing.T, fakeT *fakes.T, el spec.Element)
 	}{
 		{
 			Name:    "wrong status code",
 			ExpCode: http.StatusBadRequest,
 			ResCode: http.StatusOK,
 			Query:   "#error",
-			Assert: func(t *testing.T, fakeT *fakes.T, el spec.Element, ok bool) {
+			Assert: func(t *testing.T, fakeT *fakes.T, el spec.Element) {
 				assert.NotZero(t, errorMethodCallCount(fakeT))
 				assert.Nil(t, el)
-				assert.False(t, ok)
 			},
 		},
 		{
@@ -42,10 +41,9 @@ func TestDocumentResponseErrorMessage(t *testing.T) {
 			ResCode: http.StatusBadRequest,
 			Query:   "#error",
 			Body:    `<!DOCTYPE html><html lang="us-en"><head></head><body><p id="error">bad input value</p></body></html>`,
-			Assert: func(t *testing.T, fakeT *fakes.T, el spec.Element, ok bool) {
+			Assert: func(t *testing.T, fakeT *fakes.T, el spec.Element) {
 				assert.Zero(t, errorMethodCallCount(fakeT))
 				assert.NotNil(t, el)
-				assert.True(t, ok)
 				assert.Equal(t, "bad input value", el.TextContent())
 			},
 		},
@@ -56,8 +54,8 @@ func TestDocumentResponseErrorMessage(t *testing.T) {
 			_, _ = rec.WriteString(tt.Body)
 			res := rec.Result()
 			fakeT := new(fakes.T)
-			el, ok := domtest.DocumentResponseErrorMessage(fakeT, res, tt.ExpCode, tt.Query)
-			tt.Assert(t, fakeT, el, ok)
+			el := domtest.DocumentResponseErrorMessage(fakeT, res, tt.ExpCode, tt.Query)
+			tt.Assert(t, fakeT, el)
 		})
 	}
 
@@ -67,11 +65,10 @@ func TestDocumentResponseErrorMessage(t *testing.T) {
 			Body:       io.NopCloser(iotest.ErrReader(errors.New("banana"))),
 		}
 		fakeT := new(fakes.T)
-		el, ok := domtest.DocumentResponseErrorMessage(fakeT, res, http.StatusOK, "#error")
+		el := domtest.DocumentResponseErrorMessage(fakeT, res, http.StatusOK, "#error")
 
 		assert.NotZero(t, errorMethodCallCount(fakeT))
 		assert.Nil(t, el)
-		assert.False(t, ok)
 	})
 }
 
@@ -86,17 +83,16 @@ func TestDocumentFragmentResponseErrorMessage(t *testing.T) {
 		ExpCode int
 		Body    string
 		Query   string
-		Assert  func(t *testing.T, fakeT *fakes.T, el spec.Element, ok bool)
+		Assert  func(t *testing.T, fakeT *fakes.T, el spec.Element)
 	}{
 		{
 			Name:    "wrong status code",
 			ExpCode: http.StatusBadRequest,
 			ResCode: http.StatusOK,
 			Query:   "#error",
-			Assert: func(t *testing.T, fakeT *fakes.T, el spec.Element, ok bool) {
+			Assert: func(t *testing.T, fakeT *fakes.T, el spec.Element) {
 				assert.NotZero(t, errorMethodCallCount(fakeT))
 				assert.Nil(t, el)
-				assert.False(t, ok)
 			},
 		},
 		{
@@ -105,10 +101,9 @@ func TestDocumentFragmentResponseErrorMessage(t *testing.T) {
 			ResCode: http.StatusBadRequest,
 			Query:   "#error",
 			Body:    `<p id="error">bad input value</p>`,
-			Assert: func(t *testing.T, fakeT *fakes.T, el spec.Element, ok bool) {
+			Assert: func(t *testing.T, fakeT *fakes.T, el spec.Element) {
 				assert.Zero(t, errorMethodCallCount(fakeT))
 				assert.NotNil(t, el)
-				assert.True(t, ok)
 				assert.Equal(t, "bad input value", el.TextContent())
 			},
 		},
@@ -119,8 +114,8 @@ func TestDocumentFragmentResponseErrorMessage(t *testing.T) {
 			_, _ = rec.WriteString(tt.Body)
 			res := rec.Result()
 			fakeT := new(fakes.T)
-			el, ok := domtest.DocumentFragmentResponseErrorMessage(fakeT, res, tt.ExpCode, tt.Query, atom.Body)
-			tt.Assert(t, fakeT, el, ok)
+			el := domtest.DocumentFragmentResponseErrorMessage(fakeT, res, tt.ExpCode, tt.Query, atom.Body)
+			tt.Assert(t, fakeT, el)
 		})
 	}
 
@@ -130,10 +125,9 @@ func TestDocumentFragmentResponseErrorMessage(t *testing.T) {
 			Body:       io.NopCloser(iotest.ErrReader(errors.New("banana"))),
 		}
 		fakeT := new(fakes.T)
-		el, ok := domtest.DocumentFragmentResponseErrorMessage(fakeT, res, http.StatusOK, "#error", atom.Body)
+		el := domtest.DocumentFragmentResponseErrorMessage(fakeT, res, http.StatusOK, "#error", atom.Body)
 
 		assert.NotZero(t, errorMethodCallCount(fakeT))
 		assert.Nil(t, el)
-		assert.False(t, ok)
 	})
 }
