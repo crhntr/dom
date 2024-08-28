@@ -31,3 +31,5 @@ func (t *Text) CloneNode(_ bool) spec.Node {
 	}
 }
 func (t *Text) IsSameNode(other spec.Node) bool { return isSameNode(t.node, other) }
+
+func (t *Text) String() string { return t.node.Data }

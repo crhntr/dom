@@ -168,6 +168,7 @@ func (e *Element) SetOuterHTML(s string) {
 }
 
 func (e *Element) OuterHTML() string { return outerHTML(e.node) }
+func (e *Element) String() string    { return e.OuterHTML() }
 
 type siblingElements struct {
 	firstChild *html.Node
