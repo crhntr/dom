@@ -3,6 +3,7 @@ package dom
 import (
 	"strings"
 
+	"github.com/andybalholm/cascadia"
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 
@@ -32,6 +33,14 @@ func (d *Document) QuerySelector(query string) spec.Element {
 func (d *Document) QuerySelectorAll(query string) spec.NodeList[spec.Element] {
 	return querySelectorAll(d.node, query, false)
 }
+
+func (d *Document) QuerySelectorEach(query string) spec.NodeIterator[spec.Element] {
+	m := cascadia.MustCompile(query)
+	return func(yield func(spec.Element) bool) {
+		querySelectorEach(d.node, m, yield)
+	}
+}
+
 func (d *Document) Contains(other spec.Node) bool { return contains(d.node, other) }
 
 // TextContent returns an empty string.

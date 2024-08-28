@@ -435,11 +435,16 @@ func querySelector(node *html.Node, query string, includeParent bool) spec.Eleme
 }
 
 func querySelectorAll(node *html.Node, query string, includeParent bool) nodeListHTMLElements {
-	q := cascadia.MustCompile(query)
-	results := cascadia.QueryAll(node, cascadia.MustCompile(query))
-	if includeParent && node.Type == html.ElementNode && q.Match(node) {
+	m := cascadia.MustCompile(query)
+	var results []*html.Node
+	if includeParent && m.Match(node) {
 		results = slices.Insert(results, 0, node)
 	}
+	querySelectorEach(node, m, func(element spec.Element) bool {
+		el := element.(*Element)
+		results = append(results, el.node)
+		return true
+	})
 	return results
 }
 
@@ -487,4 +492,15 @@ func getAttribute(node *html.Node, name string) string {
 		}
 	}
 	return ""
+}
+
+func querySelectorEach(n *html.Node, m cascadia.Matcher, yield func(spec.Element) bool) {
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		if m.Match(c) {
+			if !yield(&Element{node: c}) {
+				return
+			}
+		}
+		querySelectorEach(c, m, yield)
+	}
 }

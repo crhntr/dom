@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"strings"
 
+	"github.com/andybalholm/cascadia"
 	"golang.org/x/net/html"
 
 	"github.com/crhntr/dom/spec"
@@ -11,6 +12,13 @@ import (
 
 type Element struct {
 	node *html.Node
+}
+
+func (e *Element) QuerySelectorEach(query string) spec.NodeIterator[spec.Element] {
+	m := cascadia.MustCompile(query)
+	return func(yield func(spec.Element) bool) {
+		querySelectorEach(e.node, m, yield)
+	}
 }
 
 // NewNode

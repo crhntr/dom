@@ -13,6 +13,8 @@ import (
 	"github.com/crhntr/dom/spec"
 )
 
+var _ spec.Element = (*Element)(nil)
+
 func TestElement_NodeType(t *testing.T) {
 	// language=html
 	parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`))

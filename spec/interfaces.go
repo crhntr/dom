@@ -188,6 +188,7 @@ type ElementQueries interface {
 
 	QuerySelector(query string) Element
 	QuerySelectorAll(query string) NodeList[Element]
+	QuerySelectorEach(query string) NodeIterator[Element]
 }
 
 // Element is based on
@@ -248,6 +249,7 @@ type DocumentFragment interface {
 
 	QuerySelector(query string) Element
 	QuerySelectorAll(query string) NodeList[Element]
+	QuerySelectorEach(query string) NodeIterator[Element]
 }
 
 type Comment interface {
@@ -256,3 +258,5 @@ type Comment interface {
 	Data() string
 	SetData() string
 }
+
+type NodeIterator[N Node] func(func(N) bool)

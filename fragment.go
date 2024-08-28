@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"slices"
 
+	"github.com/andybalholm/cascadia"
 	"golang.org/x/net/html"
 
 	"github.com/crhntr/dom/spec"
@@ -126,4 +127,18 @@ func (d *DocumentFragment) QuerySelectorAll(query string) spec.NodeList[spec.Ele
 		list = append(list, querySelectorAll(n, query, true)...)
 	}
 	return slices.Clip(list)
+}
+
+func (d *DocumentFragment) QuerySelectorEach(query string) spec.NodeIterator[spec.Element] {
+	m := cascadia.MustCompile(query)
+	return func(yield func(spec.Element) bool) {
+		for _, n := range d.nodes {
+			if m.Match(n) {
+				if !yield(&Element{node: n}) {
+					return
+				}
+			}
+			querySelectorEach(n, m, yield)
+		}
+	}
 }

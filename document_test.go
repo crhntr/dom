@@ -303,7 +303,7 @@ func TestDocument_QuerySelectorAll(t *testing.T) {
 	document := &Document{node: parsedDocument}
 
 	result := document.QuerySelectorAll(`#1 [data-find-me]`)
-	assert.Equal(t, result.Length(), 2)
+	require.Equal(t, result.Length(), 2)
 	assert.Equal(t, "x1", result.Item(0).ID())
 	assert.Equal(t, "x2", result.Item(1).ID())
 }
