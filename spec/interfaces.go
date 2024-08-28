@@ -188,7 +188,8 @@ type ElementQueries interface {
 
 	QuerySelector(query string) Element
 	QuerySelectorAll(query string) NodeList[Element]
-	QuerySelectorEach(query string) NodeIterator[Element]
+
+	QuerySelectorIterator
 }
 
 // Element is based on
@@ -249,7 +250,7 @@ type DocumentFragment interface {
 
 	QuerySelector(query string) Element
 	QuerySelectorAll(query string) NodeList[Element]
-	QuerySelectorEach(query string) NodeIterator[Element]
+	QuerySelectorIterator
 }
 
 type Comment interface {
@@ -259,4 +260,12 @@ type Comment interface {
 	SetData() string
 }
 
-type NodeIterator[N Node] func(func(N) bool)
+type (
+	NodeIterator[N Node] func(func(N) bool)
+
+	// QuerySelectorIterator is a first draft node iterator for Go 1.23 range func iteration.
+	// I am not sure if I like the name.
+	QuerySelectorIterator interface {
+		QuerySelectorEach(query string) NodeIterator[Element]
+	}
+)
