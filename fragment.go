@@ -138,7 +138,9 @@ func (d *DocumentFragment) QuerySelectorEach(query string) spec.NodeIterator[spe
 					return
 				}
 			}
-			querySelectorEach(n, m, yield)
+			if !querySelectorEach(n, m, yield) {
+				return
+			}
 		}
 	}
 }

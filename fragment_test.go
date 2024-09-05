@@ -380,3 +380,30 @@ func TestDocumentFragment_String(t *testing.T) {
 		assert.Equal(t, rawHTML, fragment.String())
 	})
 }
+
+func TestDocumentFragment_QuerySelectorEach(t *testing.T) {
+	fragment, _ := html.ParseFragment(strings.NewReader( /* language=html */ `<div id="n1">
+	<div id="n2">
+		<div id="n3"></div>
+	</div>
+	<div id="n4"></div>
+</div>
+<div id="n5"></div>
+<div id="n6">
+	<div id="n7"></div>
+</div>`), &html.Node{Type: html.ElementNode, Data: "body", DataAtom: atom.Body})
+
+	for exp := 1; exp <= 7; exp++ {
+		got := 0
+		dom.NewDocumentFragment(fragment).QuerySelectorEach("[id]")(func(el spec.Element) bool {
+			got++
+			assert.NotNil(t, el)
+			if got == exp {
+				return false
+			} else {
+				return true
+			}
+		})
+		assert.Equal(t, exp, got)
+	}
+}

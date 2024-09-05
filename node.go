@@ -494,13 +494,16 @@ func getAttribute(node *html.Node, name string) string {
 	return ""
 }
 
-func querySelectorEach(n *html.Node, m cascadia.Matcher, yield func(spec.Element) bool) {
+func querySelectorEach(n *html.Node, m cascadia.Matcher, yield func(spec.Element) bool) bool {
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
 		if m.Match(c) {
 			if !yield(&Element{node: c}) {
-				return
+				return false
 			}
 		}
-		querySelectorEach(c, m, yield)
+		if !querySelectorEach(c, m, yield) {
+			return false
+		}
 	}
+	return true
 }
