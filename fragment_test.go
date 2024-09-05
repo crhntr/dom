@@ -393,17 +393,17 @@ func TestDocumentFragment_QuerySelectorEach(t *testing.T) {
 	<div id="n7"></div>
 </div>`), &html.Node{Type: html.ElementNode, Data: "body", DataAtom: atom.Body})
 
-	for exp := 1; exp <= 7; exp++ {
-		got := 0
+	for stopOnCall := 1; stopOnCall <= 7; stopOnCall++ {
+		callCount := 0
 		dom.NewDocumentFragment(fragment).QuerySelectorEach("[id]")(func(el spec.Element) bool {
-			got++
+			callCount++
 			assert.NotNil(t, el)
-			if got == exp {
+			if callCount == stopOnCall {
 				return false
 			} else {
 				return true
 			}
 		})
-		assert.Equal(t, exp, got)
+		assert.Equal(t, stopOnCall, callCount)
 	}
 }
