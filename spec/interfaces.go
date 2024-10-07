@@ -150,6 +150,9 @@ type Document interface {
 	// CreateDocumentFragment() node
 
 	CreateTextNode(text string) Text
+
+	Head() Element
+	Body() Element
 }
 
 // ParentNode is based on https://dom.spec.whatwg.org/#interface-parentnode. It also includes some fields and
