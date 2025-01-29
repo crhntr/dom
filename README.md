@@ -4,4 +4,4 @@ This package has pure Go implementation of some Document Object Model functions 
 
 It makes use of the awesome package [andybalholm/cascadia](https://github.com/andybalholm/cascadia).
 
-The spec pacakge specifies interfaces; dom has implementations.
+The spec package specifies interfaces; dom has implementations.
