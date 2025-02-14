@@ -63,6 +63,7 @@ func (e *Element) GetElementsByClassName(name string) spec.ElementCollection {
 func (e *Element) QuerySelector(query string) spec.Element {
 	return querySelector(e.node, query, false)
 }
+
 func (e *Element) QuerySelectorAll(query string) spec.NodeList[spec.Element] {
 	return querySelectorAll(e.node, query, false)
 }

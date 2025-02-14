@@ -418,6 +418,7 @@ func nextSibling(receiver js.Value) spec.ChildNode {
 func firstElementChild(receiver js.Value) spec.Element {
 	return newElement(receiver.Get("firstElementChild"))
 }
+
 func lastElementChild(receiver js.Value) spec.Element {
 	return newElement(receiver.Get("lastElementChild"))
 }
@@ -426,9 +427,11 @@ func childElementCount(receiver js.Value) int { return receiver.Get("childElemen
 func appendNodes(receiver js.Value, in []spec.Node) {
 	receiver.Call("append", valueArray(in)...)
 }
+
 func prependNodes(receiver js.Value, in []spec.Node) {
 	receiver.Call("prepend", valueArray(in)...)
 }
+
 func replaceChildrenNodes(receiver js.Value, in []spec.Node) {
 	receiver.Call("replaceChildren", valueArray(in)...)
 }
