@@ -1,6 +1,7 @@
 package dom
 
 import (
+	"iter"
 	"strings"
 
 	"github.com/andybalholm/cascadia"
@@ -37,10 +38,10 @@ func (d *Document) QuerySelectorAll(query string) spec.NodeList[spec.Element] {
 	return querySelectorAll(d.node, query, false)
 }
 
-func (d *Document) QuerySelectorEach(query string) spec.NodeIterator[spec.Element] {
+func (d *Document) QuerySelectorSequence(query string) iter.Seq[spec.Element] {
 	m := cascadia.MustCompile(query)
 	return func(yield func(spec.Element) bool) {
-		querySelectorEach(d.node, m, yield)
+		querySelectorSequence(d.node, m, yield)
 	}
 }
 

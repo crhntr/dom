@@ -440,7 +440,7 @@ func querySelectorAll(node *html.Node, query string, includeParent bool) nodeLis
 	if includeParent && m.Match(node) {
 		results = slices.Insert(results, 0, node)
 	}
-	querySelectorEach(node, m, func(element spec.Element) bool {
+	querySelectorSequence(node, m, func(element spec.Element) bool {
 		el := element.(*Element)
 		results = append(results, el.node)
 		return true
@@ -494,14 +494,14 @@ func getAttribute(node *html.Node, name string) string {
 	return ""
 }
 
-func querySelectorEach(n *html.Node, m cascadia.Matcher, yield func(spec.Element) bool) bool {
+func querySelectorSequence(n *html.Node, m cascadia.Matcher, yield func(spec.Element) bool) bool {
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
 		if m.Match(c) {
 			if !yield(&Element{node: c}) {
 				return false
 			}
 		}
-		if !querySelectorEach(c, m, yield) {
+		if !querySelectorSequence(c, m, yield) {
 			return false
 		}
 	}

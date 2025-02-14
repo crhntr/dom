@@ -322,17 +322,17 @@ func TestDocumentFragment_QuerySelector(t *testing.T) {
 	})
 	t.Run("tree of nested results", func(t *testing.T) {
 		fragment := parseDocumentFragment(t,
-			/* language=html */ `<div id="n0">
-	<div id="n1">
-		<div id="n2"></div>
+			/* language=html */ `<div id='n0'>
+	<div id='n1'>
+		<div id='n2'></div>
 	</div>
-	<div id="n3"></div>
+	<div id='n3'></div>
 </div>
-<div id="n4">
-	<div id="n5">
-		<div id="n6"></div>
+<div id='n4'>
+	<div id='n5'>
+		<div id='n6'></div>
 	</div>
-	<div id="n7"></div>
+	<div id='n7'></div>
 </div>`)
 		results := fragment.QuerySelectorAll("div")
 		require.NotNil(t, results)
@@ -395,7 +395,7 @@ func TestDocumentFragment_QuerySelectorEach(t *testing.T) {
 
 	for stopOnCall := 1; stopOnCall <= 7; stopOnCall++ {
 		callCount := 0
-		dom.NewDocumentFragment(fragment).QuerySelectorEach("[id]")(func(el spec.Element) bool {
+		dom.NewDocumentFragment(fragment).QuerySelectorSequence("[id]")(func(el spec.Element) bool {
 			callCount++
 			assert.NotNil(t, el)
 			if callCount == stopOnCall {

@@ -1,5 +1,7 @@
 package spec
 
+import "iter"
+
 // Node is based on a subset of the methods and types in
 // https://dom.spec.whatwg.org/#interface-node as of 2021-12-10
 //
@@ -263,12 +265,6 @@ type Comment interface {
 	SetData() string
 }
 
-type (
-	NodeIterator[N Node] func(func(N) bool)
-
-	// QuerySelectorIterator is a first draft node iterator for Go 1.23 range func iteration.
-	// I am not sure if I like the name.
-	QuerySelectorIterator interface {
-		QuerySelectorEach(query string) NodeIterator[Element]
-	}
-)
+type QuerySelectorIterator interface {
+	QuerySelectorSequence(query string) iter.Seq[Element]
+}

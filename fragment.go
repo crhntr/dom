@@ -2,6 +2,7 @@ package dom
 
 import (
 	"bytes"
+	"iter"
 	"slices"
 
 	"github.com/andybalholm/cascadia"
@@ -129,7 +130,7 @@ func (d *DocumentFragment) QuerySelectorAll(query string) spec.NodeList[spec.Ele
 	return slices.Clip(list)
 }
 
-func (d *DocumentFragment) QuerySelectorEach(query string) spec.NodeIterator[spec.Element] {
+func (d *DocumentFragment) QuerySelectorSequence(query string) iter.Seq[spec.Element] {
 	m := cascadia.MustCompile(query)
 	return func(yield func(spec.Element) bool) {
 		for _, n := range d.nodes {
@@ -138,7 +139,7 @@ func (d *DocumentFragment) QuerySelectorEach(query string) spec.NodeIterator[spe
 					return
 				}
 			}
-			if !querySelectorEach(n, m, yield) {
+			if !querySelectorSequence(n, m, yield) {
 				return
 			}
 		}
