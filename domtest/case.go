@@ -43,7 +43,7 @@ func (tc Case[TestingT, F]) Run(handler func(f *F) http.Handler) func(t TestingT
 	}
 }
 
-type DocumentTestFunc[T TestingT, F any] func(t T, fragment spec.Document, f *F)
+type DocumentTestFunc[T TestingT, F any] func(t T, document spec.Document, f *F)
 
 func Document[T TestingT, F any](then DocumentTestFunc[T, F]) ThenFunc[T, F] {
 	return func(t T, res *http.Response, f *F) {
@@ -63,7 +63,7 @@ func Fragment[T TestingT, F any](parent atom.Atom, then FragmentTestFunc[T, F]) 
 	}
 }
 
-type QuerySelectorFunc[T TestingT, F any] func(t T, el spec.Element, f *F)
+type QuerySelectorFunc[T TestingT, F any] func(t T, element spec.Element, f *F)
 
 func QuerySelector[T TestingT, F any](query string, then QuerySelectorFunc[T, F]) ThenFunc[T, F] {
 	return func(t T, res *http.Response, f *F) {
