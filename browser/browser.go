@@ -3,6 +3,7 @@
 package browser
 
 import (
+	"iter"
 	"syscall/js"
 
 	"github.com/crhntr/dom/spec"
@@ -58,7 +59,7 @@ func (d *Document) QuerySelectorAll(query string) spec.NodeList[spec.Element] {
 	return querySelectorAll(d.value, query)
 }
 
-func (d *Document) QuerySelectorEach(query string) spec.NodeIterator[spec.Element] {
+func (d *Document) QuerySelectorSequence(query string) iter.Seq[spec.Element] {
 	return querySelectorEach(d.value, query)
 }
 
@@ -100,7 +101,7 @@ func (d *DocumentFragment) QuerySelectorAll(query string) spec.NodeList[spec.Ele
 	return querySelectorAll(d.value, query)
 }
 
-func (d *DocumentFragment) QuerySelectorEach(query string) spec.NodeIterator[spec.Element] {
+func (d *DocumentFragment) QuerySelectorSequence(query string) iter.Seq[spec.Element] {
 	return querySelectorEach(d.value, query)
 }
 
@@ -158,7 +159,7 @@ func (e *Element) QuerySelectorAll(query string) spec.NodeList[spec.Element] {
 	return querySelectorAll(e.value, query)
 }
 
-func (e *Element) QuerySelectorEach(query string) spec.NodeIterator[spec.Element] {
+func (e *Element) QuerySelectorSequence(query string) iter.Seq[spec.Element] {
 	return querySelectorEach(e.value, query)
 }
 
@@ -368,7 +369,7 @@ func querySelectorAll(receiver js.Value, query string) elementList {
 	return elementList{value: receiver.Call("querySelectorAll", query)}
 }
 
-func querySelectorEach(receiver js.Value, query string) spec.NodeIterator[spec.Element] {
+func querySelectorEach(receiver js.Value, query string) iter.Seq[spec.Element] {
 	return func(f func(spec.Element) bool) {
 		list := querySelectorAll(receiver, query)
 		for i := 0; i < list.Length(); i++ {
