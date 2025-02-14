@@ -26,13 +26,13 @@ var (
 	fragmentHTML string
 )
 
-func TestResponse(t *testing.T) {
+func TestParseResponseDocument(t *testing.T) {
 	t.Run("when a valid html document is passed", func(t *testing.T) {
-		testingT := new(fakes.T)
+		testingT := new(fakes.TestingT)
 		res := &http.Response{
 			Body: io.NopCloser(strings.NewReader(indexHTML)),
 		}
-		document := domtest.Response(testingT, res)
+		document := domtest.ParseResponseDocument(testingT, res)
 
 		assert.Equal(t, testingT.ErrorCallCount(), 0, "it should not report errors")
 		assert.Equal(t, testingT.LogCallCount(), 0)
@@ -44,11 +44,11 @@ func TestResponse(t *testing.T) {
 	})
 
 	t.Run("when a fragment is returned", func(t *testing.T) {
-		testingT := new(fakes.T)
+		testingT := new(fakes.TestingT)
 		res := &http.Response{
 			Body: io.NopCloser(strings.NewReader(fragmentHTML)),
 		}
-		document := domtest.Response(testingT, res)
+		document := domtest.ParseResponseDocument(testingT, res)
 
 		assert.Equal(t, testingT.ErrorCallCount(), 0, "it should not report errors")
 		assert.Equal(t, testingT.LogCallCount(), 0)
@@ -62,7 +62,7 @@ func TestResponse(t *testing.T) {
 	})
 
 	t.Run("when read fails and close is ok", func(t *testing.T) {
-		testingT := new(fakes.T)
+		testingT := new(fakes.TestingT)
 		fakeBody := &errClose{
 			Reader:   iotest.ErrReader(errors.New("banana")),
 			closeErr: nil,
@@ -70,7 +70,7 @@ func TestResponse(t *testing.T) {
 		res := &http.Response{
 			Body: fakeBody,
 		}
-		document := domtest.Response(testingT, res)
+		document := domtest.ParseResponseDocument(testingT, res)
 
 		assert.Equal(t, testingT.ErrorCallCount(), 1, "it should report an error")
 		assert.Equal(t, testingT.LogCallCount(), 0)
@@ -81,7 +81,7 @@ func TestResponse(t *testing.T) {
 	})
 
 	t.Run("when read is ok but close fails", func(t *testing.T) {
-		testingT := new(fakes.T)
+		testingT := new(fakes.TestingT)
 		fakeBody := &errClose{
 			Reader:   strings.NewReader(indexHTML),
 			closeErr: errors.New("banana"),
@@ -89,7 +89,7 @@ func TestResponse(t *testing.T) {
 		res := &http.Response{
 			Body: fakeBody,
 		}
-		document := domtest.Response(testingT, res)
+		document := domtest.ParseResponseDocument(testingT, res)
 
 		assert.Equal(t, testingT.ErrorCallCount(), 1, "it should report two errors")
 		assert.Equal(t, testingT.LogCallCount(), 0)
@@ -100,7 +100,7 @@ func TestResponse(t *testing.T) {
 	})
 
 	t.Run("when both read and close fail", func(t *testing.T) {
-		testingT := new(fakes.T)
+		testingT := new(fakes.TestingT)
 		fakeBody := &errClose{
 			Reader:   iotest.ErrReader(errors.New("banana")),
 			closeErr: errors.New("lemon"),
@@ -108,7 +108,7 @@ func TestResponse(t *testing.T) {
 		res := &http.Response{
 			Body: fakeBody,
 		}
-		document := domtest.Response(testingT, res)
+		document := domtest.ParseResponseDocument(testingT, res)
 
 		assert.Equal(t, testingT.ErrorCallCount(), 2, "it should report two errors")
 		assert.Equal(t, testingT.LogCallCount(), 0)
@@ -119,7 +119,7 @@ func TestResponse(t *testing.T) {
 	})
 
 	t.Run("when both read and close fail", func(t *testing.T) {
-		testingT := new(fakes.T)
+		testingT := new(fakes.TestingT)
 		fakeBody := &errClose{
 			Reader:   iotest.ErrReader(errors.New("banana")),
 			closeErr: errors.New("lemon"),
@@ -127,7 +127,7 @@ func TestResponse(t *testing.T) {
 		res := &http.Response{
 			Body: fakeBody,
 		}
-		document := domtest.Response(testingT, res)
+		document := domtest.ParseResponseDocument(testingT, res)
 
 		assert.Equal(t, testingT.ErrorCallCount(), 2, "it should report two errors")
 		assert.Equal(t, testingT.LogCallCount(), 0)
@@ -138,13 +138,13 @@ func TestResponse(t *testing.T) {
 	})
 }
 
-func TestDocumentFragment(t *testing.T) {
+func TestParseResponseDocumentFragment(t *testing.T) {
 	t.Run("when a valid html document is passed", func(t *testing.T) {
-		testingT := new(fakes.T)
+		testingT := new(fakes.TestingT)
 		res := &http.Response{
 			Body: io.NopCloser(strings.NewReader(fragmentHTML)),
 		}
-		fragment := domtest.DocumentFragmentResponse(testingT, res, atom.Body)
+		fragment := domtest.ParseResponseDocumentFragment(testingT, res, atom.Body)
 
 		assert.Equal(t, testingT.ErrorCallCount(), 0, "it should not report errors")
 		assert.Equal(t, testingT.LogCallCount(), 0)
@@ -155,21 +155,21 @@ func TestDocumentFragment(t *testing.T) {
 	})
 }
 
-func TestReader(t *testing.T) {
-	testingT := new(fakes.T)
+func TestParseReaderDocument(t *testing.T) {
+	testingT := new(fakes.TestingT)
 	r := iotest.ErrReader(errors.New("banana"))
 
-	document := domtest.Reader(testingT, r)
+	document := domtest.ParseReaderDocument(testingT, r)
 
 	assert.Equal(t, testingT.ErrorCallCount(), 1, "it should report two errors")
 	assert.NotZero(t, testingT.HelperCallCount())
 	assert.Nil(t, document)
 }
 
-func TestString(t *testing.T) {
-	testingT := new(fakes.T)
+func TestParseStringDocument(t *testing.T) {
+	testingT := new(fakes.TestingT)
 
-	document := domtest.String(testingT, "<p>Hello, world!</p>")
+	document := domtest.ParseStringDocument(testingT, "<p>Hello, world!</p>")
 
 	assert.Equal(t, testingT.ErrorCallCount(), 0, "it should not report errors")
 	assert.Equal(t, testingT.LogCallCount(), 0)

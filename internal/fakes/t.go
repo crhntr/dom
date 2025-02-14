@@ -7,7 +7,7 @@ import (
 	"github.com/crhntr/dom/domtest"
 )
 
-type T struct {
+type TestingT struct {
 	ErrorStub        func(...any)
 	errorMutex       sync.RWMutex
 	errorArgsForCall []struct {
@@ -50,7 +50,7 @@ type T struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *T) Error(arg1 ...any) {
+func (fake *TestingT) Error(arg1 ...any) {
 	fake.errorMutex.Lock()
 	fake.errorArgsForCall = append(fake.errorArgsForCall, struct {
 		arg1 []any
@@ -63,26 +63,26 @@ func (fake *T) Error(arg1 ...any) {
 	}
 }
 
-func (fake *T) ErrorCallCount() int {
+func (fake *TestingT) ErrorCallCount() int {
 	fake.errorMutex.RLock()
 	defer fake.errorMutex.RUnlock()
 	return len(fake.errorArgsForCall)
 }
 
-func (fake *T) ErrorCalls(stub func(...any)) {
+func (fake *TestingT) ErrorCalls(stub func(...any)) {
 	fake.errorMutex.Lock()
 	defer fake.errorMutex.Unlock()
 	fake.ErrorStub = stub
 }
 
-func (fake *T) ErrorArgsForCall(i int) []any {
+func (fake *TestingT) ErrorArgsForCall(i int) []any {
 	fake.errorMutex.RLock()
 	defer fake.errorMutex.RUnlock()
 	argsForCall := fake.errorArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *T) Errorf(arg1 string, arg2 ...interface{}) {
+func (fake *TestingT) Errorf(arg1 string, arg2 ...interface{}) {
 	fake.errorfMutex.Lock()
 	fake.errorfArgsForCall = append(fake.errorfArgsForCall, struct {
 		arg1 string
@@ -96,26 +96,26 @@ func (fake *T) Errorf(arg1 string, arg2 ...interface{}) {
 	}
 }
 
-func (fake *T) ErrorfCallCount() int {
+func (fake *TestingT) ErrorfCallCount() int {
 	fake.errorfMutex.RLock()
 	defer fake.errorfMutex.RUnlock()
 	return len(fake.errorfArgsForCall)
 }
 
-func (fake *T) ErrorfCalls(stub func(string, ...interface{})) {
+func (fake *TestingT) ErrorfCalls(stub func(string, ...interface{})) {
 	fake.errorfMutex.Lock()
 	defer fake.errorfMutex.Unlock()
 	fake.ErrorfStub = stub
 }
 
-func (fake *T) ErrorfArgsForCall(i int) (string, []interface{}) {
+func (fake *TestingT) ErrorfArgsForCall(i int) (string, []interface{}) {
 	fake.errorfMutex.RLock()
 	defer fake.errorfMutex.RUnlock()
 	argsForCall := fake.errorfArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *T) FailNow() {
+func (fake *TestingT) FailNow() {
 	fake.failNowMutex.Lock()
 	fake.failNowArgsForCall = append(fake.failNowArgsForCall, struct {
 	}{})
@@ -127,19 +127,19 @@ func (fake *T) FailNow() {
 	}
 }
 
-func (fake *T) FailNowCallCount() int {
+func (fake *TestingT) FailNowCallCount() int {
 	fake.failNowMutex.RLock()
 	defer fake.failNowMutex.RUnlock()
 	return len(fake.failNowArgsForCall)
 }
 
-func (fake *T) FailNowCalls(stub func()) {
+func (fake *TestingT) FailNowCalls(stub func()) {
 	fake.failNowMutex.Lock()
 	defer fake.failNowMutex.Unlock()
 	fake.FailNowStub = stub
 }
 
-func (fake *T) Failed() bool {
+func (fake *TestingT) Failed() bool {
 	fake.failedMutex.Lock()
 	ret, specificReturn := fake.failedReturnsOnCall[len(fake.failedArgsForCall)]
 	fake.failedArgsForCall = append(fake.failedArgsForCall, struct {
@@ -157,19 +157,19 @@ func (fake *T) Failed() bool {
 	return fakeReturns.result1
 }
 
-func (fake *T) FailedCallCount() int {
+func (fake *TestingT) FailedCallCount() int {
 	fake.failedMutex.RLock()
 	defer fake.failedMutex.RUnlock()
 	return len(fake.failedArgsForCall)
 }
 
-func (fake *T) FailedCalls(stub func() bool) {
+func (fake *TestingT) FailedCalls(stub func() bool) {
 	fake.failedMutex.Lock()
 	defer fake.failedMutex.Unlock()
 	fake.FailedStub = stub
 }
 
-func (fake *T) FailedReturns(result1 bool) {
+func (fake *TestingT) FailedReturns(result1 bool) {
 	fake.failedMutex.Lock()
 	defer fake.failedMutex.Unlock()
 	fake.FailedStub = nil
@@ -178,7 +178,7 @@ func (fake *T) FailedReturns(result1 bool) {
 	}{result1}
 }
 
-func (fake *T) FailedReturnsOnCall(i int, result1 bool) {
+func (fake *TestingT) FailedReturnsOnCall(i int, result1 bool) {
 	fake.failedMutex.Lock()
 	defer fake.failedMutex.Unlock()
 	fake.FailedStub = nil
@@ -192,7 +192,7 @@ func (fake *T) FailedReturnsOnCall(i int, result1 bool) {
 	}{result1}
 }
 
-func (fake *T) Helper() {
+func (fake *TestingT) Helper() {
 	fake.helperMutex.Lock()
 	fake.helperArgsForCall = append(fake.helperArgsForCall, struct {
 	}{})
@@ -204,19 +204,19 @@ func (fake *T) Helper() {
 	}
 }
 
-func (fake *T) HelperCallCount() int {
+func (fake *TestingT) HelperCallCount() int {
 	fake.helperMutex.RLock()
 	defer fake.helperMutex.RUnlock()
 	return len(fake.helperArgsForCall)
 }
 
-func (fake *T) HelperCalls(stub func()) {
+func (fake *TestingT) HelperCalls(stub func()) {
 	fake.helperMutex.Lock()
 	defer fake.helperMutex.Unlock()
 	fake.HelperStub = stub
 }
 
-func (fake *T) Log(arg1 ...any) {
+func (fake *TestingT) Log(arg1 ...any) {
 	fake.logMutex.Lock()
 	fake.logArgsForCall = append(fake.logArgsForCall, struct {
 		arg1 []any
@@ -229,26 +229,26 @@ func (fake *T) Log(arg1 ...any) {
 	}
 }
 
-func (fake *T) LogCallCount() int {
+func (fake *TestingT) LogCallCount() int {
 	fake.logMutex.RLock()
 	defer fake.logMutex.RUnlock()
 	return len(fake.logArgsForCall)
 }
 
-func (fake *T) LogCalls(stub func(...any)) {
+func (fake *TestingT) LogCalls(stub func(...any)) {
 	fake.logMutex.Lock()
 	defer fake.logMutex.Unlock()
 	fake.LogStub = stub
 }
 
-func (fake *T) LogArgsForCall(i int) []any {
+func (fake *TestingT) LogArgsForCall(i int) []any {
 	fake.logMutex.RLock()
 	defer fake.logMutex.RUnlock()
 	argsForCall := fake.logArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *T) SkipNow() {
+func (fake *TestingT) SkipNow() {
 	fake.skipNowMutex.Lock()
 	fake.skipNowArgsForCall = append(fake.skipNowArgsForCall, struct {
 	}{})
@@ -260,19 +260,19 @@ func (fake *T) SkipNow() {
 	}
 }
 
-func (fake *T) SkipNowCallCount() int {
+func (fake *TestingT) SkipNowCallCount() int {
 	fake.skipNowMutex.RLock()
 	defer fake.skipNowMutex.RUnlock()
 	return len(fake.skipNowArgsForCall)
 }
 
-func (fake *T) SkipNowCalls(stub func()) {
+func (fake *TestingT) SkipNowCalls(stub func()) {
 	fake.skipNowMutex.Lock()
 	defer fake.skipNowMutex.Unlock()
 	fake.SkipNowStub = stub
 }
 
-func (fake *T) Invocations() map[string][][]interface{} {
+func (fake *TestingT) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
 	fake.errorMutex.RLock()
@@ -296,7 +296,7 @@ func (fake *T) Invocations() map[string][][]interface{} {
 	return copiedInvocations
 }
 
-func (fake *T) recordInvocation(key string, args []interface{}) {
+func (fake *TestingT) recordInvocation(key string, args []interface{}) {
 	fake.invocationsMutex.Lock()
 	defer fake.invocationsMutex.Unlock()
 	if fake.invocations == nil {
@@ -308,4 +308,4 @@ func (fake *T) recordInvocation(key string, args []interface{}) {
 	fake.invocations[key] = append(fake.invocations[key], args)
 }
 
-var _ domtest.T = new(T)
+var _ domtest.TestingT = new(TestingT)

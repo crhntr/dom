@@ -14,9 +14,9 @@ import (
 )
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
-//counterfeiter:generate --fake-name T -o ../internal/fakes/t.go . T
+//counterfeiter:generate --fake-name TestingT -o ../internal/fakes/t.go . TestingT
 
-type T interface {
+type TestingT interface {
 	Helper()
 	Error(...any)
 	Log(...any)
@@ -26,7 +26,7 @@ type T interface {
 	SkipNow()
 }
 
-func Response(t T, res *http.Response) spec.Document {
+func ParseResponseDocument(t TestingT, res *http.Response) spec.Document {
 	t.Helper()
 	buf, err := io.ReadAll(res.Body)
 	if err != nil {
@@ -40,15 +40,15 @@ func Response(t T, res *http.Response) spec.Document {
 		t.Error(err)
 		return nil
 	}
-	return Reader(t, bytes.NewReader(buf))
+	return ParseReaderDocument(t, bytes.NewReader(buf))
 }
 
-func String(t T, s string) spec.Document {
+func ParseStringDocument(t TestingT, s string) spec.Document {
 	t.Helper()
-	return Reader(t, strings.NewReader(s))
+	return ParseReaderDocument(t, strings.NewReader(s))
 }
 
-func Reader(t T, r io.Reader) spec.Document {
+func ParseReaderDocument(t TestingT, r io.Reader) spec.Document {
 	t.Helper()
 	node, err := html.Parse(r)
 	if err != nil {
@@ -58,28 +58,7 @@ func Reader(t T, r io.Reader) spec.Document {
 	return dom.NewNode(node).(spec.Document)
 }
 
-// DocumentFragment creates a list of elements from a reader.
-// It does not skip text nodes and will panic if it encounters any.
-// Deprecated: use DocumentFragmentReader instead
-func DocumentFragment(t T, r io.Reader, parent atom.Atom) []spec.Element {
-	t.Helper()
-	nodes, err := html.ParseFragment(r, &html.Node{
-		Type:     html.ElementNode,
-		Data:     parent.String(),
-		DataAtom: parent,
-	})
-	if err != nil {
-		t.Error(err)
-		return nil
-	}
-	var result []spec.Element
-	for _, node := range nodes {
-		result = append(result, dom.NewNode(node).(spec.Element))
-	}
-	return result
-}
-
-func DocumentFragmentReader(t T, r io.Reader, parent atom.Atom) spec.DocumentFragment {
+func ParseReaderDocumentFragment(t TestingT, r io.Reader, parent atom.Atom) spec.DocumentFragment {
 	t.Helper()
 
 	body, err := io.ReadAll(r)
@@ -99,13 +78,13 @@ func DocumentFragmentReader(t T, r io.Reader, parent atom.Atom) spec.DocumentFra
 	return dom.NewDocumentFragment(nodes)
 }
 
-func DocumentFragmentResponse(t T, res *http.Response, parent atom.Atom) spec.DocumentFragment {
+func ParseResponseDocumentFragment(t TestingT, res *http.Response, parent atom.Atom) spec.DocumentFragment {
 	t.Helper()
 	defer closeAndCheckError(t, res.Body)
-	return DocumentFragmentReader(t, res.Body, parent)
+	return ParseReaderDocumentFragment(t, res.Body, parent)
 }
 
-func closeAndCheckError(t T, c io.Closer) {
+func closeAndCheckError(t TestingT, c io.Closer) {
 	if err := c.Close(); err != nil {
 		t.Error(err)
 	}
