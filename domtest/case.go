@@ -10,23 +10,23 @@ import (
 	"github.com/crhntr/dom/spec"
 )
 
-type ThenFunc[T TestingT, F any] func(t T, res *http.Response, f *F)
+type ThenFunc[T TestingT, F any] func(t T, res *http.Response, app *F)
 
 type Case[T TestingT, F any] struct {
 	Name  string
-	Given func(t T, fakes *F)
+	Given func(t T, app *F)
 	When  func(t T) *http.Request
 	Then  ThenFunc[T, F]
 }
 
-func (tc Case[TestingT, Fakes]) Run(handler func(fakes *Fakes) http.Handler) func(t TestingT) {
+func (tc Case[TestingT, F]) Run(handler func(f *F) http.Handler) func(t TestingT) {
 	return func(t TestingT) {
 		t.Helper()
 		if tc.When == nil {
 			t.Errorf("case field 'When' is not set")
 			return
 		}
-		f := new(Fakes)
+		f := new(F)
 		if tc.Given != nil {
 			tc.Given(t, f)
 		}
@@ -45,34 +45,34 @@ func (tc Case[TestingT, Fakes]) Run(handler func(fakes *Fakes) http.Handler) fun
 
 type DocumentTestFunc[T TestingT, F any] func(t T, fragment spec.Document, f *F)
 
-func Document[T TestingT, F any](f DocumentTestFunc[T, F]) ThenFunc[T, F] {
-	return func(t T, res *http.Response, fakes *F) {
+func Document[T TestingT, F any](then DocumentTestFunc[T, F]) ThenFunc[T, F] {
+	return func(t T, res *http.Response, f *F) {
 		t.Helper()
 		doc := ParseResponseDocument(t, res)
-		f(t, doc, fakes)
+		then(t, doc, f)
 	}
 }
 
 type FragmentTestFunc[T TestingT, F any] func(t T, fragment spec.DocumentFragment, f *F)
 
-func Fragment[T TestingT, F any](parent atom.Atom, f FragmentTestFunc[T, F]) ThenFunc[T, F] {
-	return func(t T, res *http.Response, fakes *F) {
+func Fragment[T TestingT, F any](parent atom.Atom, then FragmentTestFunc[T, F]) ThenFunc[T, F] {
+	return func(t T, res *http.Response, f *F) {
 		t.Helper()
 		fragment := ParseResponseDocumentFragment(t, res, parent)
-		f(t, fragment, fakes)
+		then(t, fragment, f)
 	}
 }
 
 type QuerySelectorFunc[T TestingT, F any] func(t T, el spec.Element, f *F)
 
-func QuerySelector[T TestingT, F any](query string, f QuerySelectorFunc[T, F]) ThenFunc[T, F] {
-	return func(t T, res *http.Response, fakes *F) {
+func QuerySelector[T TestingT, F any](query string, then QuerySelectorFunc[T, F]) ThenFunc[T, F] {
+	return func(t T, res *http.Response, f *F) {
 		t.Helper()
 		document := ParseResponseDocument(t, res)
 		el := document.QuerySelector(query)
 		if !assert.NotNilf(t, el, "querySelector(%q) did not select any elements", query) {
 			t.Log("document", document)
 		}
-		f(t, el, fakes)
+		then(t, el, f)
 	}
 }
