@@ -10,11 +10,13 @@ import (
 	"github.com/crhntr/dom/spec"
 )
 
+type GivenFunc[T TestingT, F any] func(t T) F
+
 type ThenFunc[T TestingT, F any] func(t T, res *http.Response, f F)
 
 type Case[T TestingT, F any] struct {
 	Name  string
-	Given func(t T) F
+	Given GivenFunc[T, F]
 	When  func(t T) *http.Request
 	Then  ThenFunc[T, F]
 }
@@ -40,6 +42,14 @@ func (tc Case[TestingT, F]) Run(handler func(f F) http.Handler) func(t TestingT)
 		if tc.Then != nil {
 			tc.Then(t, res, f)
 		}
+	}
+}
+
+func GivenPtr[T TestingT, F *Dereferenced, Dereferenced any](given func(t T, f F)) GivenFunc[T, F] {
+	return func(t T) F {
+		f := new(Dereferenced)
+		given(t, f)
+		return f
 	}
 }
 
