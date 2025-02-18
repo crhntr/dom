@@ -18,15 +18,17 @@ import (
 )
 
 func TestCase(t *testing.T) {
-	for _, tt := range []domtest.Case[*testing.T, fake.App]{
+	for _, tt := range []domtest.Case[*testing.T, *fake.App]{
 		{
 			Name: "viewing the home page",
-			Given: func(t *testing.T, app *fake.App) {
+			Given: func(t *testing.T) *fake.App {
+				app := new(fake.App)
 				app.ArticleReturns(blog.Article{
 					Title:   "Greetings!",
 					Content: "Hello, friends!",
 					Error:   nil,
 				})
+				return app
 			},
 			When: func(t *testing.T) *http.Request {
 				return httptest.NewRequest(http.MethodGet, "/article/1", nil)
@@ -43,10 +45,12 @@ func TestCase(t *testing.T) {
 		},
 		{
 			Name: "the page has an error",
-			Given: func(t *testing.T, app *fake.App) {
+			Given: func(t *testing.T) *fake.App {
+				app := new(fake.App)
 				app.ArticleReturns(blog.Article{
 					Error: fmt.Errorf("lemon"),
 				})
+				return app
 			},
 			When: func(t *testing.T) *http.Request {
 				return httptest.NewRequest(http.MethodGet, "/article/1", nil)
@@ -57,10 +61,12 @@ func TestCase(t *testing.T) {
 		},
 		{
 			Name: "the page has an error and is requested by HTMX",
-			Given: func(t *testing.T, app *fake.App) {
+			Given: func(t *testing.T) *fake.App {
+				app := new(fake.App)
 				app.ArticleReturns(blog.Article{
 					Error: fmt.Errorf("lemon"),
 				})
+				return app
 			},
 			When: func(t *testing.T) *http.Request {
 				req := httptest.NewRequest(http.MethodGet, "/article/1", nil)
