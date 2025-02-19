@@ -87,7 +87,7 @@ func TestCase(t *testing.T) {
 	} {
 		t.Run(tt.Name, tt.Run(func(fakes *fake.App) http.Handler {
 			mux := http.NewServeMux()
-			blog.Routes(mux, fakes)
+			blog.TemplateRoutes(mux, fakes)
 			return mux
 		}))
 	}

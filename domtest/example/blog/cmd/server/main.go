@@ -12,6 +12,6 @@ import (
 func main() {
 	mux := http.NewServeMux()
 	app := new(blog.App)
-	blog.Routes(mux, app)
+	blog.TemplateRoutes(mux, app)
 	log.Fatal(http.ListenAndServe(":"+cmp.Or(os.Getenv("PORT"), "8080"), mux))
 }
