@@ -59,3 +59,52 @@ func TestDocument(t *testing.T) {
 		assert.Equal(t, 2, document.GetElementsByClassName(childClass).Length())
 	})
 }
+
+func TestElement_CompareDocumentPosition(t *testing.T) {
+	document := browser.OpenDocument()
+
+	a := document.CreateElement("div")
+	a.SetAttribute("id", "a")
+
+	b := document.CreateElement("span")
+	b.SetAttribute("id", "b")
+	a.AppendChild(b)
+
+	c := document.CreateElement("div")
+	c.SetAttribute("id", "c")
+
+	document.Body().AppendChild(a)
+	document.Body().AppendChild(c)
+
+	t.Run("same node", func(t *testing.T) {
+		assert.Equal(t, spec.DocumentPosition(0), a.CompareDocumentPosition(a))
+	})
+
+	t.Run("contains", func(t *testing.T) {
+		pos := a.CompareDocumentPosition(b)
+		assert.Equal(t, spec.DocumentPositionContainedBy|spec.DocumentPositionFollowing, pos)
+	})
+
+	t.Run("contained by", func(t *testing.T) {
+		pos := b.CompareDocumentPosition(a)
+		assert.Equal(t, spec.DocumentPositionContains|spec.DocumentPositionPreceding, pos)
+	})
+
+	t.Run("preceding", func(t *testing.T) {
+		pos := a.CompareDocumentPosition(c)
+		assert.Equal(t, spec.DocumentPositionFollowing, pos)
+	})
+
+	t.Run("following", func(t *testing.T) {
+		pos := c.CompareDocumentPosition(a)
+		assert.Equal(t, spec.DocumentPositionPreceding, pos)
+	})
+
+	t.Run("disconnected", func(t *testing.T) {
+		d := document.CreateElement("div")
+		// not appended to the DOM
+		pos := a.CompareDocumentPosition(d)
+		assert.True(t, spec.DocumentPositionDisconnected&pos != 0)
+		assert.True(t, spec.DocumentPositionImplementationSpecific&pos != 0)
+	})
+}
