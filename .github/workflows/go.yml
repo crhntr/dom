@@ -34,7 +34,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - name: Install dep
+      - name: Install WASM Browser Test
         permissions:
           content: read
         run: go install github.com/agnivade/wasmbrowsertest@latest
@@ -42,10 +42,6 @@ jobs:
         permissions:
           content: read
         run: mv $(go env GOPATH)/bin/wasmbrowsertest $(go env GOPATH)/bin/go_js_wasm_exec
-      - name: Build
-        permissions:
-          content: read
-        run: go build -v ./...
       - name: Test
         permissions:
           content: read
