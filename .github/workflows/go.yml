@@ -24,27 +24,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install chrome
-        permissions:
-          content: read
         uses: browser-actions/setup-chrome@v1
       - uses: actions/checkout@v4
       - name: Set up Go
-        permissions:
-          content: read
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
       - name: Install WASM Browser Test
-        permissions:
-          content: read
         run: go install github.com/agnivade/wasmbrowsertest@latest
       - name: Setup Runner
-        permissions:
-          content: read
         run: mv $(go env GOPATH)/bin/wasmbrowsertest $(go env GOPATH)/bin/go_js_wasm_exec
       - name: Test
-        permissions:
-          content: read
         env:
           GOOS: js
           GOARCH: wasm
