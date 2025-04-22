@@ -8,7 +8,7 @@ on:
   pull_request:
     branches: ["main"]
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,3 +20,36 @@ jobs:
         run: go build -v ./...
       - name: Test
         run: go test -v ./...
+  test-wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install chrome
+        permissions:
+          content: read
+        uses: browser-actions/setup-chrome@v1
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        permissions:
+          content: read
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Install dep
+        permissions:
+          content: read
+        run: go install github.com/agnivade/wasmbrowsertest@latest
+      - name: Setup Runner
+        permissions:
+          content: read
+        run: mv $(go env GOPATH)/bin/wasmbrowsertest $(go env GOPATH)/bin/go_js_wasm_exec
+      - name: Build
+        permissions:
+          content: read
+        run: go build -v ./...
+      - name: Test
+        permissions:
+          content: read
+        env:
+          GOOS: js
+          GOARCH: wasm
+        run: go test -v ./browser
