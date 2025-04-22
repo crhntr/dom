@@ -23,14 +23,14 @@ jobs:
   test-wasm:
     runs-on: ubuntu-latest
     steps:
-      - name: Disable AppArmor
-        if: runner.os == 'Linux'
-        run: |
-          # Disable AppArmor for Ubuntu 23.10+.
-          # https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md
-          echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
       - name: Install chrome
         uses: browser-actions/setup-chrome@v1
+      - name: Prepare Chrome Wrapper
+        run: |
+          echo '#!/bin/bash' > chrome-wrapper.sh
+          echo 'exec /usr/bin/google-chrome --no-sandbox "$@"' >> chrome-wrapper.sh
+          chmod +x chrome-wrapper.sh
+          sudo mv chrome-wrapper.sh /usr/local/bin/google-chrome
       - uses: actions/checkout@v4
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -42,4 +42,4 @@ jobs:
         env:
           GOOS: js
           GOARCH: wasm
-        run: go test -exec wasmbrowsertest -v -timeout=5m ./browser
+        run: go test -exec 'wasmbrowsertest -chrome-arg=--no-sandbox' -v -timeout=5m ./browser
