@@ -23,6 +23,12 @@ jobs:
   test-wasm:
     runs-on: ubuntu-latest
     steps:
+      - name: Disable AppArmor
+        if: runner.os == 'Linux'
+        run: |
+          # Disable AppArmor for Ubuntu 23.10+.
+          # https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md
+          echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
       - name: Install chrome
         uses: browser-actions/setup-chrome@v1
       - uses: actions/checkout@v4
@@ -38,4 +44,4 @@ jobs:
         env:
           GOOS: js
           GOARCH: wasm
-        run: go test -v ./browser
+        run: cleanenv -remove-prefix GITHUB_ -remove-prefix JAVA_ -remove-prefix PSModulePath -remove-prefix STATS_ -remove-prefix RUNNER_ -- go test -exec go_js_wasm_exec -v -race -timeout=5m ./browser
