@@ -36,6 +36,8 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
+      - name: Install cleanenv
+        run: go install ./cmd/cleanenv
       - name: Install WASM Browser Test
         run: go install github.com/agnivade/wasmbrowsertest@latest
       - name: Setup Runner
