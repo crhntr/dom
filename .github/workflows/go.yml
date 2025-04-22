@@ -39,7 +39,7 @@ jobs:
       - name: Install WASM Browser Test
         run: |
           go install github.com/agnivade/wasmbrowsertest@latest
-          mv "$(go env GOPATH)/bin/wasmbrowsertest" "$(go env GOPATH)/bin/go_js_wasm_exec}"
+          mv "$(go env GOPATH)/bin/wasmbrowsertest" "$(go env GOPATH)/bin/go_js_wasm_exec"
       - name: Test
         env:
           GOOS: js
