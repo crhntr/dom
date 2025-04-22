@@ -36,14 +36,10 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - name: Install cleanenv
-        run: go install ./cmd/cleanenv
       - name: Install WASM Browser Test
         run: go install github.com/agnivade/wasmbrowsertest@latest
-      - name: Setup Runner
-        run: mv $(go env GOPATH)/bin/wasmbrowsertest $(go env GOPATH)/bin/go_js_wasm_exec
       - name: Test
         env:
           GOOS: js
           GOARCH: wasm
-        run: cleanenv -remove-prefix GITHUB_ -remove-prefix JAVA_ -remove-prefix PSModulePath -remove-prefix STATS_ -remove-prefix RUNNER_ -- go test -exec go_js_wasm_exec -v -race -timeout=5m ./browser
+        run: go test -exec wasmbrowsertest -v -race -timeout=5m ./browser
