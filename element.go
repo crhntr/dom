@@ -43,6 +43,9 @@ func (e *Element) Length() int {
 	}
 	return result
 }
+func (e *Element) CompareDocumentPosition(other spec.Node) spec.DocumentPosition {
+	return compareDocumentPosition(e.node, other)
+}
 
 // ParentNode
 

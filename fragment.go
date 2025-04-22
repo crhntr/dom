@@ -42,6 +42,10 @@ func (d *DocumentFragment) IsSameNode(other spec.Node) bool {
 	return d == o
 }
 
+func (d *DocumentFragment) CompareDocumentPosition(other spec.Node) spec.DocumentPosition {
+	return compareDocumentFragmentPosition(d.nodes, other)
+}
+
 func (d *DocumentFragment) TextContent() string {
 	var buf bytes.Buffer
 	for _, n := range d.nodes {

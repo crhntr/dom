@@ -47,6 +47,10 @@ func (d *Document) QuerySelectorSequence(query string) iter.Seq[spec.Element] {
 
 func (d *Document) Contains(other spec.Node) bool { return contains(d.node, other) }
 
+func (d *Document) CompareDocumentPosition(other spec.Node) spec.DocumentPosition {
+	return compareDocumentPosition(d.node, other)
+}
+
 // TextContent returns an empty string.
 // The spec says it should return null
 // https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent

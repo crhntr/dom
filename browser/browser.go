@@ -18,6 +18,10 @@ func (n *Node) CloneNode(deep bool) spec.Node   { return cloneNode(n.value, deep
 func (n *Node) IsSameNode(other spec.Node) bool { return isSameNode(n.value, other) }
 func (n *Node) TextContent() string             { return textContent(n.value) }
 
+func (n *Node) CompareDocumentPosition(other spec.Node) spec.DocumentPosition {
+	return compareDocumentPosition(n.value, other)
+}
+
 type Document struct {
 	value js.Value
 }
@@ -37,6 +41,10 @@ func (d *Document) NodeType() spec.NodeType         { return nodeType(d.value) }
 func (d *Document) CloneNode(deep bool) spec.Node   { return cloneNode(d.value, deep) }
 func (d *Document) IsSameNode(other spec.Node) bool { return isSameNode(d.value, other) }
 func (d *Document) TextContent() string             { return textContent(d.value) }
+
+func (d *Document) CompareDocumentPosition(other spec.Node) spec.DocumentPosition {
+	return compareDocumentPosition(d.value, other)
+}
 
 func (d *Document) Head() spec.Element { return newElement(d.value.Get("head")) }
 func (d *Document) Body() spec.Element { return newElement(d.value.Get("body")) }
@@ -84,6 +92,10 @@ func (d *DocumentFragment) CloneNode(deep bool) spec.Node   { return cloneNode(d
 func (d *DocumentFragment) IsSameNode(other spec.Node) bool { return isSameNode(d.value, other) }
 func (d *DocumentFragment) TextContent() string             { return textContent(d.value) }
 
+func (d *DocumentFragment) CompareDocumentPosition(other spec.Node) spec.DocumentPosition {
+	return compareDocumentPosition(d.value, other)
+}
+
 func (d *DocumentFragment) Children() spec.ElementCollection { return children(d.value) }
 func (d *DocumentFragment) FirstElementChild() spec.Element  { return firstElementChild(d.value) }
 func (d *DocumentFragment) LastElementChild() spec.Element   { return lastElementChild(d.value) }
@@ -120,6 +132,9 @@ func (e *Element) NodeType() spec.NodeType         { return nodeType(e.value) }
 func (e *Element) CloneNode(deep bool) spec.Node   { return cloneNode(e.value, deep) }
 func (e *Element) IsSameNode(other spec.Node) bool { return isSameNode(e.value, other) }
 func (e *Element) TextContent() string             { return textContent(e.value) }
+func (e *Element) CompareDocumentPosition(other spec.Node) spec.DocumentPosition {
+	return compareDocumentPosition(e.value, other)
+}
 
 func (e *Element) Length() int { return e.Length() }
 
@@ -232,6 +247,10 @@ func (t *Text) CloneNode(deep bool) spec.Node   { return cloneNode(t.value, deep
 func (t *Text) IsSameNode(other spec.Node) bool { return isSameNode(t.value, other) }
 func (t *Text) TextContent() string             { return textContent(t.value) }
 func (t *Text) Length() int                     { return t.value.Length() }
+
+func (t *Text) CompareDocumentPosition(other spec.Node) spec.DocumentPosition {
+	return compareDocumentPosition(t.value, other)
+}
 
 func (t *Text) IsConnected() bool               { return isConnected(t.value) }
 func (t *Text) OwnerDocument() spec.Document    { return ownerDocument(t.value) }
@@ -406,6 +425,9 @@ func parentNode(receiver js.Value) spec.Node       { return NewNode(receiver.Get
 func parentElement(receiver js.Value) spec.Element { return newElement(receiver.Get("parentElement")) }
 func children(receiver js.Value) htmlCollection {
 	return htmlCollection{value: receiver.Call("children")}
+}
+func compareDocumentPosition(receiver js.Value, other spec.Node) spec.DocumentPosition {
+	return spec.DocumentPosition(receiver.Call("compareDocumentPosition", JSValue(other)).Int())
 }
 
 func previousSibling(receiver js.Value) spec.ChildNode {

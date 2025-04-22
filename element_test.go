@@ -17,7 +17,7 @@ var _ spec.Element = (*Element)(nil)
 
 func TestElement_NodeType(t *testing.T) {
 	// language=html
-	parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`))
+	parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang='us-en'><head><title></title></head><body><span></span></body</html>`))
 	require.NoError(t, err)
 	document := Element{
 		node: parsedDocument.FirstChild.NextSibling,
@@ -30,7 +30,7 @@ func TestElement_IsConnected(t *testing.T) {
 	t.Run("connected", func(t *testing.T) {
 		// language=html
 		textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title></title></head>
 <body>Hello!</body>
 </html>`
@@ -51,7 +51,7 @@ func TestElement_OwnerDocument(t *testing.T) {
 	t.Run("connected", func(t *testing.T) {
 		// language=html
 		textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title></title></head>
 <body>Hello!</body>
 </html>`
@@ -73,10 +73,10 @@ func TestElement_OwnerDocument(t *testing.T) {
 func TestElement_Length(t *testing.T) {
 	// language=html
 	textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title></title></head>
 <body>
-	<div id="target"><br id="1">2<div id="3"><span id="does-not-count"></span></div></div>
+	<div id='target'><br id='1'>2<div id='3'><span id='does-not-count'></span></div></div>
 </body>
 </html>`
 	_, body := parseDocument(t, textHTML, "#target")
@@ -86,9 +86,9 @@ func TestElement_Length(t *testing.T) {
 func TestElement_ParentNode(t *testing.T) {
 	// language=html
 	textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title></title></head>
-<body><div id="app"></div></body>
+<body><div id='app'></div></body>
 </html>`
 	_, app := parseDocument(t, textHTML, "html")
 
@@ -102,9 +102,9 @@ func TestElement_ParentNode(t *testing.T) {
 func TestElement_ParentElement(t *testing.T) {
 	// language=html
 	textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title></title></head>
-<body><div id="app"></div></body>
+<body><div id='app'></div></body>
 </html>`
 	_, app := parseDocument(t, textHTML, "#app")
 
@@ -116,9 +116,9 @@ func TestElement_ParentElement(t *testing.T) {
 func TestElement_PreviousSibling(t *testing.T) {
 	// language=html
 	textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title></title></head>
-<body><span id="oldest"></span><div id="target"></div></body>
+<body><span id='oldest'></span><div id='target'></div></body>
 </html>`
 	_, target := parseDocument(t, textHTML, "#target")
 	sibling := target.PreviousSibling()
@@ -131,9 +131,9 @@ func TestElement_PreviousSibling(t *testing.T) {
 func TestElement_NextSibling(t *testing.T) {
 	// language=html
 	textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title></title></head>
-<body><div id="target"></div><span id="youngest"></span></body>
+<body><div id='target'></div><span id='youngest'></span></body>
 </html>`
 	_, target := parseDocument(t, textHTML, "#target")
 	sibling := target.NextSibling()
@@ -147,9 +147,9 @@ func TestElement_TextContent(t *testing.T) {
 	t.Run("body no text", func(t *testing.T) {
 		// language=html
 		textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title>Greetings!</title></head>
-<body><div id="target"><span></span></div></body>
+<body><div id='target'><span></span></div></body>
 </html>`
 		_, target := parseDocument(t, textHTML, "body")
 		text := target.TextContent()
@@ -159,9 +159,9 @@ func TestElement_TextContent(t *testing.T) {
 	t.Run("element no text", func(t *testing.T) {
 		// language=html
 		textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title>Greetings!</title></head>
-<body><div id="target"><span></span></div></body>
+<body><div id='target'><span></span></div></body>
 </html>`
 		_, target := parseDocument(t, textHTML, "#target")
 		text := target.TextContent()
@@ -171,10 +171,10 @@ func TestElement_TextContent(t *testing.T) {
 	t.Run("multiple lines with whitespace", func(t *testing.T) {
 		// language=html
 		textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title>Greetings!</title></head>
 <body>
-<div id="target">a
+<div id='target'>a
 b<span>c </span>d
 	e
 </div>
@@ -193,9 +193,9 @@ func TestElement_CloneNode(t *testing.T) {
 	t.Run("not deep", func(t *testing.T) {
 		// language=html
 		textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title></title></head>
-<body><div id="target"><span></span></div></body>
+<body><div id='target'><span></span></div></body>
 </html>`
 		_, target := parseDocument(t, textHTML, "#target")
 		clonedElement, ok := target.CloneNode(false).(*Element)
@@ -207,9 +207,9 @@ func TestElement_CloneNode(t *testing.T) {
 	t.Run("deep", func(t *testing.T) {
 		// language=html
 		textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title></title></head>
-<body><div id="target"><span></span></div></body>
+<body><div id='target'><span></span></div></body>
 </html>`
 		_, target := parseDocument(t, textHTML, "#target")
 		clonedElement, ok := target.CloneNode(true).(*Element)
@@ -264,11 +264,11 @@ func TestElement_QuerySelector(t *testing.T) {
 	}
 	t.Run("tree of nested results", func(t *testing.T) {
 		element := parseFirstElement(t,
-			/* language=html */ `<div id="n0">
-	<div id="n1">
-		<div id="n2"></div>
+			/* language=html */ `<div id='n0'>
+	<div id='n1'>
+		<div id='n2'></div>
 	</div>
-	<div id="n3"></div>
+	<div id='n3'></div>
 </div>`)
 		results := element.QuerySelectorAll("div")
 		require.NotNil(t, results)
@@ -280,5 +280,57 @@ func TestElement_QuerySelector(t *testing.T) {
 			assert.Equal(t, "DIV", result.TagName())
 			assert.Equal(t, "n"+strconv.Itoa(i+1), result.ID())
 		}
+	})
+}
+
+func TestElement_CompareDocumentPosition(t *testing.T) {
+	t.Run("same node", func(t *testing.T) {
+		// language=html
+		textHTML := `<!DOCTYPE html><html lang='us-en'><body><div id='x'></div></body></html>`
+		_, x := parseDocument(t, textHTML, "#x")
+		assert.Equal(t, spec.DocumentPosition(0), x.CompareDocumentPosition(x))
+	})
+
+	t.Run("a contains b", func(t *testing.T) {
+		// language=html
+		textHTML := `<!DOCTYPE html><html lang='us-en'><body><div id='a'><span id='b'></span></div></body></html>`
+		doc, a := parseDocument(t, textHTML, "#a")
+		b := doc.QuerySelector("#b")
+		pos := a.CompareDocumentPosition(b)
+		assert.Equal(t, spec.DocumentPositionContainedBy|spec.DocumentPositionFollowing, pos)
+	})
+
+	t.Run("b contains a", func(t *testing.T) {
+		// language=html
+		textHTML := `<!DOCTYPE html><html lang='us-en'><body><div id='a'><span id='b'></span></div></body></html>`
+		doc, a := parseDocument(t, textHTML, "#a")
+		b := doc.QuerySelector("#b")
+		pos := b.CompareDocumentPosition(a)
+		assert.Equal(t, spec.DocumentPositionContains|spec.DocumentPositionPreceding, pos)
+	})
+
+	t.Run("preceding", func(t *testing.T) {
+		// language=html
+		textHTML := `<!DOCTYPE html><html lang='us-en'><body><div id='a'></div><div id='b'></div></body></html>`
+		doc, a := parseDocument(t, textHTML, "#a")
+		b := doc.QuerySelector("#b")
+		pos := a.CompareDocumentPosition(b)
+		assert.Equal(t, spec.DocumentPositionFollowing, pos)
+	})
+
+	t.Run("following", func(t *testing.T) {
+		// language=html
+		textHTML := `<!DOCTYPE html><html lang='us-en'><body><div id='a'></div><div id='b'></div></body></html>`
+		doc, a := parseDocument(t, textHTML, "#a")
+		b := doc.QuerySelector("#b")
+		pos := b.CompareDocumentPosition(a)
+		assert.Equal(t, spec.DocumentPositionPreceding, pos)
+	})
+
+	t.Run("disconnected", func(t *testing.T) {
+		a := &Element{node: &html.Node{Type: html.ElementNode, Data: "div"}}
+		b := &Element{node: &html.Node{Type: html.ElementNode, Data: "div"}}
+		pos := a.CompareDocumentPosition(b)
+		assert.Equal(t, spec.DocumentPositionDisconnected|spec.DocumentPositionImplementationSpecific, pos)
 	})
 }

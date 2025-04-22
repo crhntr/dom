@@ -23,7 +23,6 @@ import "iter"
 // The following methods were removed because they do not apply across all relevant node types.
 // - NodeValue (only applies to Text and Attr. The former already has Data and the latter is ignored)
 // - IsEqualNode (has different comparisons for different node types and this makes implementation difficult)
-// - CompareDocumentPosition (might implement this, if needed)
 //
 // The following methods have been added in addition to those documented in the whatwg document.
 // - Length
@@ -32,6 +31,7 @@ type Node interface {
 	CloneNode(deep bool) Node
 	IsSameNode(other Node) bool
 	TextContent() string
+	CompareDocumentPosition(other Node) DocumentPosition
 }
 
 type ChildNode interface {
@@ -43,8 +43,6 @@ type ChildNode interface {
 	ParentElement() Element
 	PreviousSibling() ChildNode
 	NextSibling() ChildNode
-
-	// CompareDocumentPosition(other Node) DocumentPosition
 
 	// Length should be based on https://dom.spec.whatwg.org/#concept-node-length
 	Length() int
