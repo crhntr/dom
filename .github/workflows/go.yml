@@ -42,4 +42,4 @@ jobs:
         env:
           GOOS: js
           GOARCH: wasm
-        run: go test -exec 'wasmbrowsertest -chrome-arg=--no-sandbox' -v -timeout=5m ./browser
+        run: go test -exec 'wasmbrowsertest' -v -timeout=5m ./browser
