@@ -150,6 +150,7 @@ func ownerDocument(node *html.Node) spec.Document {
 	}
 	return &Document{node: n}
 }
+
 func ownerDocumentNode(node *html.Node) *html.Node {
 	p := node.Parent
 	for p != nil {

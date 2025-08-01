@@ -426,6 +426,7 @@ func parentElement(receiver js.Value) spec.Element { return newElement(receiver.
 func children(receiver js.Value) htmlCollection {
 	return htmlCollection{value: receiver.Call("children")}
 }
+
 func compareDocumentPosition(receiver js.Value, other spec.Node) spec.DocumentPosition {
 	return spec.DocumentPosition(receiver.Call("compareDocumentPosition", JSValue(other)).Int())
 }

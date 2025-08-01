@@ -30,6 +30,7 @@ func (t *Text) CloneNode(_ bool) spec.Node {
 		},
 	}
 }
+
 func (t *Text) CompareDocumentPosition(other spec.Node) spec.DocumentPosition {
 	return compareDocumentPosition(t.node, other)
 }
