@@ -13,9 +13,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"golang.org/x/net/html/atom"
 
-	"github.com/crhntr/dom/domtest"
-	"github.com/crhntr/dom/internal/fakes"
-	"github.com/crhntr/dom/spec"
+	"github.com/typelate/dom/domtest"
+	"github.com/typelate/dom/internal/fakes"
+	"github.com/typelate/dom/spec"
 )
 
 var (

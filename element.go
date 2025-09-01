@@ -8,7 +8,7 @@ import (
 	"github.com/andybalholm/cascadia"
 	"golang.org/x/net/html"
 
-	"github.com/crhntr/dom/spec"
+	"github.com/typelate/dom/spec"
 )
 
 type Element struct {

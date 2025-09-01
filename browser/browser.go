@@ -6,7 +6,7 @@ import (
 	"iter"
 	"syscall/js"
 
-	"github.com/crhntr/dom/spec"
+	"github.com/typelate/dom/spec"
 )
 
 type Node struct {

@@ -1,4 +1,4 @@
-module github.com/crhntr/dom
+module github.com/typelate/dom
 
 go 1.24
 

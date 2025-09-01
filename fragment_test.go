@@ -11,8 +11,8 @@ import (
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 
-	"github.com/crhntr/dom"
-	"github.com/crhntr/dom/spec"
+	"github.com/typelate/dom"
+	"github.com/typelate/dom/spec"
 )
 
 func parseDocumentFragment(t *testing.T, input string) *dom.DocumentFragment {

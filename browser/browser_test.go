@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/crhntr/dom/browser"
-	"github.com/crhntr/dom/spec"
+	"github.com/typelate/dom/browser"
+	"github.com/typelate/dom/spec"
 )
 
 func TestDocument(t *testing.T) {

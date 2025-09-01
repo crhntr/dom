@@ -4,7 +4,7 @@ package fakes
 import (
 	"sync"
 
-	"github.com/crhntr/dom/domtest"
+	"github.com/typelate/dom/domtest"
 )
 
 type TestingT struct {

@@ -10,11 +10,11 @@ import (
 	"github.com/stretchr/testify/require"
 	"golang.org/x/net/html/atom"
 
-	"github.com/crhntr/dom/domtest"
-	"github.com/crhntr/dom/spec"
+	"github.com/typelate/dom/domtest"
+	"github.com/typelate/dom/spec"
 
-	"github.com/crhntr/dom/domtest/example/blog"
-	"github.com/crhntr/dom/domtest/example/blog/internal/fake"
+	"github.com/typelate/dom/domtest/example/blog"
+	"github.com/typelate/dom/domtest/example/blog/internal/fake"
 )
 
 func TestCase(t *testing.T) {

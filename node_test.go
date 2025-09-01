@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"golang.org/x/net/html"
 
-	"github.com/crhntr/dom/spec"
+	"github.com/typelate/dom/spec"
 )
 
 func Test_nodeType(t *testing.T) {

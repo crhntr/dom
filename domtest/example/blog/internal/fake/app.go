@@ -4,7 +4,7 @@ package fake
 import (
 	"sync"
 
-	"github.com/crhntr/dom/domtest/example/blog"
+	"github.com/typelate/dom/domtest/example/blog"
 )
 
 type App struct {

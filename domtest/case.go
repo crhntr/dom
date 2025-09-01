@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/net/html/atom"
 
-	"github.com/crhntr/dom/spec"
+	"github.com/typelate/dom/spec"
 )
 
 type GivenFunc[T TestingT, F any] func(t T) F

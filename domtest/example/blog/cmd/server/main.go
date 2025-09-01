@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/crhntr/dom/domtest/example/blog"
+	"github.com/typelate/dom/domtest/example/blog"
 )
 
 func main() {

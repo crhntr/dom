@@ -9,12 +9,12 @@ import (
 
 	"golang.org/x/net/html"
 
-	"github.com/crhntr/dom/spec"
+	"github.com/typelate/dom/spec"
 )
 
 func TestDocument_NodeType(t *testing.T) {
 	// language=html
-	textHTML := `<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`
+	textHTML := `<!DOCTYPE html><html lang='us-en'><head><title></title></head><body><span></span></body</html>`
 	document, _ := parseDocument(t, textHTML, "")
 
 	assert.Equal(t, spec.NodeTypeDocument, document.NodeType())
@@ -23,7 +23,7 @@ func TestDocument_NodeType(t *testing.T) {
 func TestDocument_CloneNode(t *testing.T) {
 	t.Run("deep", func(t *testing.T) {
 		// language=html
-		textHTML := `<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`
+		textHTML := `<!DOCTYPE html><html lang='us-en'><head><title></title></head><body><span></span></body</html>`
 		document, _ := parseDocument(t, textHTML, "")
 
 		result := document.CloneNode(true)
@@ -36,7 +36,7 @@ func TestDocument_CloneNode(t *testing.T) {
 	})
 	t.Run("not deep", func(t *testing.T) {
 		// language=html
-		textHTML := `<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`
+		textHTML := `<!DOCTYPE html><html lang='us-en'><head><title></title></head><body><span></span></body</html>`
 		document, _ := parseDocument(t, textHTML, "")
 
 		result := document.CloneNode(false)
@@ -51,7 +51,7 @@ func TestDocument_CloneNode(t *testing.T) {
 func TestDocument_IsSameNode(t *testing.T) {
 	t.Run("same", func(t *testing.T) {
 		// language=html
-		parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`))
+		parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang='us-en'><head><title></title></head><body><span></span></body</html>`))
 		require.NoError(t, err)
 
 		document := &Document{node: parsedDocument}
@@ -64,7 +64,7 @@ func TestDocument_IsSameNode(t *testing.T) {
 
 	t.Run("same html different address", func(t *testing.T) {
 		// language=html
-		in := `<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`
+		in := `<!DOCTYPE html><html lang='us-en'><head><title></title></head><body><span></span></body</html>`
 		parsedDocument1, err := html.Parse(strings.NewReader(in))
 		require.NoError(t, err)
 		parsedDocument2, err := html.Parse(strings.NewReader(in))
@@ -75,7 +75,7 @@ func TestDocument_IsSameNode(t *testing.T) {
 
 	t.Run("receiver node is nil", func(t *testing.T) {
 		// language=html
-		in := `<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`
+		in := `<!DOCTYPE html><html lang='us-en'><head><title></title></head><body><span></span></body</html>`
 		parsedDocument, err := html.Parse(strings.NewReader(in))
 		require.NoError(t, err)
 
@@ -84,7 +84,7 @@ func TestDocument_IsSameNode(t *testing.T) {
 
 	t.Run("param is nil", func(t *testing.T) {
 		// language=html
-		in := `<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`
+		in := `<!DOCTYPE html><html lang='us-en'><head><title></title></head><body><span></span></body</html>`
 		parsedDocument, err := html.Parse(strings.NewReader(in))
 		require.NoError(t, err)
 
@@ -93,7 +93,7 @@ func TestDocument_IsSameNode(t *testing.T) {
 
 	t.Run("param node is nil", func(t *testing.T) {
 		// language=html
-		in := `<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`
+		in := `<!DOCTYPE html><html lang='us-en'><head><title></title></head><body><span></span></body</html>`
 		parsedDocument, err := html.Parse(strings.NewReader(in))
 		require.NoError(t, err)
 
@@ -103,7 +103,7 @@ func TestDocument_IsSameNode(t *testing.T) {
 
 func TestDocument_GetElementsByTagName(t *testing.T) {
 	// language=html
-	textHTML := `<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span id="a"></span><span id="b"></span></body</html>`
+	textHTML := `<!DOCTYPE html><html lang='us-en'><head><title></title></head><body><span id='a'></span><span id='b'></span></body</html>`
 	parsedDocument, err := html.Parse(strings.NewReader(textHTML))
 	require.NoError(t, err)
 	document := &Document{node: parsedDocument}
@@ -115,10 +115,10 @@ func TestDocument_GetElementsByClassName(t *testing.T) {
 	t.Run("nothing found", func(t *testing.T) {
 		// language=html
 		textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title>Get Elements By Class Name</title></head>
 <body>
-	<span id="x1"></span>
+	<span id='x1'></span>
 </body>
 </html>`
 		parsedDocument, err := html.Parse(strings.NewReader(textHTML))
@@ -131,10 +131,10 @@ func TestDocument_GetElementsByClassName(t *testing.T) {
 	t.Run("element found", func(t *testing.T) {
 		// language=html
 		textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title>Get Elements By Class Name</title></head>
 <body>
-	<span id="x1" class="find-me"></span>
+	<span id='x1' class='find-me'></span>
 </body>
 </html>`
 		parsedDocument, err := html.Parse(strings.NewReader(textHTML))
@@ -148,13 +148,13 @@ func TestDocument_GetElementsByClassName(t *testing.T) {
 	t.Run("multiple elements found", func(t *testing.T) {
 		// language=html
 		textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title>Get Elements By Class Name</title></head>
 <body>
-	<span id="x1" class="find-me"></span>
-	<span id="x2" class="find-me"></span>
+	<span id='x1' class='find-me'></span>
+	<span id='x2' class='find-me'></span>
 	<div>
-		<span id="x3" class="find-me"></span>
+		<span id='x3' class='find-me'></span>
 	</div>
 </body>
 </html>`
@@ -172,12 +172,12 @@ func TestDocument_GetElementsByClassName(t *testing.T) {
 	t.Run("embedded element found", func(t *testing.T) {
 		// language=html
 		textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title>Get Elements By Class Name</title></head>
 <body>
-	<div id="x1" class="find-me">
-		<div id="x2" class="find-me">
-			<div id="x3" class="find-me"></div>
+	<div id='x1' class='find-me'>
+		<div id='x2' class='find-me'>
+			<div id='x3' class='find-me'></div>
 		</div>
 	</div>
 </body>
@@ -196,10 +196,10 @@ func TestDocument_GetElementsByClassName(t *testing.T) {
 	t.Run("other class in in attribute before", func(t *testing.T) {
 		// language=html
 		textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title>Get Elements By Class Name</title></head>
 <body>
-	<span id="x1" class="other find-me"></span>
+	<span id='x1' class='other find-me'></span>
 </body>
 </html>`
 		parsedDocument, err := html.Parse(strings.NewReader(textHTML))
@@ -213,10 +213,10 @@ func TestDocument_GetElementsByClassName(t *testing.T) {
 	t.Run("other class in in attribute after", func(t *testing.T) {
 		// language=html
 		textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title>Get Elements By Class Name</title></head>
 <body>
-	<span id="x1" class="find-me other"></span>
+	<span id='x1' class='find-me other'></span>
 </body>
 </html>`
 		parsedDocument, err := html.Parse(strings.NewReader(textHTML))
@@ -230,10 +230,10 @@ func TestDocument_GetElementsByClassName(t *testing.T) {
 	t.Run("extra whitespace", func(t *testing.T) {
 		// language=html
 		textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title>Get Elements By Class Name</title></head>
 <body>
-	<span id="x1" class="    find-me     "></span>
+	<span id='x1' class='    find-me     '></span>
 </body>
 </html>`
 		parsedDocument, err := html.Parse(strings.NewReader(textHTML))
@@ -247,10 +247,10 @@ func TestDocument_GetElementsByClassName(t *testing.T) {
 	t.Run("multiple classes found", func(t *testing.T) {
 		// language=html
 		textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title>Get Elements By Class Name</title></head>
 <body>
-	<span id="x1" class="find-me other"></span>
+	<span id='x1' class='find-me other'></span>
 </body>
 </html>`
 		parsedDocument, err := html.Parse(strings.NewReader(textHTML))
@@ -264,12 +264,12 @@ func TestDocument_GetElementsByClassName(t *testing.T) {
 func TestDocument_QuerySelector(t *testing.T) {
 	// language=html
 	textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title>Get Elements By Class Name</title></head>
 <body>
-	<div id="1">
+	<div id='1'>
 		<span></span>
-		<span data-find-me="x" id="x1"></span>
+		<span data-find-me='x' id='x1'></span>
 	</div>
 </body>
 </html>`
@@ -287,15 +287,15 @@ func TestDocument_QuerySelector(t *testing.T) {
 func TestDocument_QuerySelectorAll(t *testing.T) {
 	// language=html
 	textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title>Get Elements By Class Name</title></head>
 <body>
-	<div id="1">
+	<div id='1'>
 		<span></span>
-		<span data-find-me="x" id="x1"></span>
-		<span data-find-me="y" id="x2"></span>
+		<span data-find-me='x' id='x1'></span>
+		<span data-find-me='y' id='x2'></span>
 	</div>
-	<span data-find-me="NOPE" id="x3"></span>
+	<span data-find-me='NOPE' id='x3'></span>
 </body>
 </html>`
 	parsedDocument, err := html.Parse(strings.NewReader(textHTML))
@@ -311,7 +311,7 @@ func TestDocument_QuerySelectorAll(t *testing.T) {
 func TestDocument_Contains(t *testing.T) {
 	t.Run("a child", func(t *testing.T) {
 		// language=html
-		parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`))
+		parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang='us-en'><head><title></title></head><body><span></span></body</html>`))
 		require.NoError(t, err)
 		document := Document{
 			node: parsedDocument,
@@ -321,7 +321,7 @@ func TestDocument_Contains(t *testing.T) {
 
 	t.Run("some other node", func(t *testing.T) {
 		// language=html
-		parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`))
+		parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang='us-en'><head><title></title></head><body><span></span></body</html>`))
 		require.NoError(t, err)
 		document := Document{
 			node: parsedDocument,
@@ -331,7 +331,7 @@ func TestDocument_Contains(t *testing.T) {
 
 	t.Run("nil", func(t *testing.T) {
 		// language=html
-		parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`))
+		parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang='us-en'><head><title></title></head><body><span></span></body</html>`))
 		require.NoError(t, err)
 		document := Document{
 			node: parsedDocument,
@@ -343,7 +343,7 @@ func TestDocument_Contains(t *testing.T) {
 func TestDocument_TextContent(t *testing.T) {
 	// language=html
 	textHTML := `<!DOCTYPE html>
-<html lang="us-en">
+<html lang='us-en'>
 <head><title>Get Elements By Class Name</title></head>
 <body>
 	<p>Hello, world!</p>
@@ -358,7 +358,7 @@ func TestDocument_TextContent(t *testing.T) {
 
 func TestDocument_CreateElement(t *testing.T) {
 	// language=html
-	parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><span></span></body</html>`))
+	parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang='us-en'><head><title></title></head><body><span></span></body</html>`))
 	require.NoError(t, err)
 	exp := parsedDocument.FirstChild.NextSibling.LastChild.FirstChild
 	exp.Parent = nil
@@ -371,7 +371,7 @@ func TestDocument_CreateElement(t *testing.T) {
 
 func TestDocument_CreateElementIs(t *testing.T) {
 	// language=html
-	parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang="us-en"><head><title></title></head><body><div is="fruit"></div></body</html>`))
+	parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang='us-en'><head><title></title></head><body><div is='fruit'></div></body</html>`))
 	require.NoError(t, err)
 	exp := parsedDocument.FirstChild.NextSibling.LastChild.FirstChild
 	exp.Parent = nil
@@ -384,7 +384,7 @@ func TestDocument_CreateElementIs(t *testing.T) {
 
 func TestDocument_CreateTextNode(t *testing.T) {
 	// language=html
-	parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang="us-en"><head><title>peach</title></head><body></body</html>`))
+	parsedDocument, err := html.Parse(strings.NewReader(`<!DOCTYPE html><html lang='us-en'><head><title>peach</title></head><body></body</html>`))
 	require.NoError(t, err)
 	exp := parsedDocument.FirstChild.NextSibling.FirstChild.FirstChild.FirstChild
 	exp.Parent = nil

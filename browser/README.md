@@ -1,6 +1,6 @@
 # Browser
 
-github.com/crhntr/dom/browser is an experimental package.
+github.com/typelate/dom/browser is an experimental package.
 
 A prior attempt at this was here: https://github.com/crhntr/window
 
